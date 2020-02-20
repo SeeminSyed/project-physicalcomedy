@@ -13,7 +13,7 @@ Following are the key features that we plan to finish by the beta version of our
 - Usage of the camera on the device (laptop/phone)
 - Sharing audio-video stream
 - Generating a random word by pre-defined categories
-- Guessing the word
+- Providing guess options
 
 ### Additional Features
 Following are additional features that we plan on finishing by the final version of our project
@@ -24,10 +24,25 @@ Following are additional features that we plan on finishing by the final version
     * Having a points system
     * Muting audio and video stream
     * Timer
+    * Text chat
 - Generating a link/QR-Code that will direct to the game session
 
 ### Technologies That We Plan on Using
-Following are the technologies that we plan on using
+Description of Tech:
+- **React.js** for front-end user interface development
+- **WebRTC and WebSockets** for peer to peer communication in video, speech and text
+- **STUN and TURN servers** to allow communication behind NAT
+- **Node.js** for the backend
+- **Express** to build the backend APIs
+- **Nedb** for backend storage
+- **GitHub** as version control
+- **Postman and Chrome** for testing front-end and back-end
+- **handtrack.js, Computer Vision and Teachable Machine** for the AI aspect
 
 ### Top 5 technical challenges
-Following are the top five technical challenges that we have anticipated
+Following are the top five technical challenges that we have anticipated:
+- Enabling camera API on different platforms (mobile, tablet, desktop)
+- Handling serverless audio, video and text streaming between users in realtime
+- Creating UI that is responsive to different platforms
+- Tracking player scores and metadata
+- Providing AI with database of words and related actions
