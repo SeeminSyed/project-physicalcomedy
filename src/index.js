@@ -6,7 +6,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import Connect from './components/Connect';
 import Receive from './components/Receive';
-import NotFound from './components/NotFound';
+import NotFound from './pages/NotFound';
 
 // https://codeburst.io/getting-started-with-react-router-5c978f70df91
 const routing = (
