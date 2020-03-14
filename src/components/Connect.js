@@ -34,13 +34,28 @@ const button = {
 export default class Connect extends React.Component {
     constructor() {
         super();
-        this.peer = new Peer();
-        console.log(this.peer.id);
-
+        // this.peer: Peer;
+        this.peer = new Peer('peerjs', {
+            debug: 2
+        });;
+        this.lastPeerId = null;
         this.state = { key: '' };
-
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.initialize();
+    }
+
+    initialize() {
+        this.peer.on('open', function (id) {
+            // Workaround for peer.reconnect deleting previous id
+            if (this.peer.id === null) {
+                console.log('Received null id from peer open');
+                this.peer.id = this.lastPeerId;
+            } else {
+                this.lastPeerId = this.peer.id;
+            }
+            console.log('ID: ' + this.peer.id);
+        });
     }
 
     handleChange(event) {

@@ -14,6 +14,7 @@ const style = {
 export default class Receive extends React.Component {
     constructor() {
         super();
+        
         // create a new peer
         this.peer = new Peer();
     }
@@ -38,7 +39,7 @@ export default class Receive extends React.Component {
     render() {
         // render the stream here
         console.log(this.peer.id);
-        return (<div className="peer" style={style}>Peer id: [ADD A KEY HERE]</div>)
-        // return (<div>Peer id: {this.peer.id}</div>);
+        // return (<div className="peer" style={style}>Peer id: [ADD A KEY HERE]</div>)
+        return (<div className="peer" style={style}>Peer id: {this.peer.id}</div>);
     }
 }
