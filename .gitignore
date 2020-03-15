@@ -1,23 +1,49 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Peers
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+/peers/node_modules
+/peers/.pnp
+/peers/.pnp.js
 
 # testing
-/coverage
+/peers/coverage
 
 # production
-/build
+/peers/build
 
 # misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+/peers/.DS_Store
+/peers/.env.local
+/peers/.env.development.local
+/peers/.env.test.local
+/peers/.env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+/peers/npm-debug.log*
+/peers/yarn-debug.log*
+/peers/yarn-error.log*
+
+
+# Server
+
+# dependencies
+/server/node_modules
+/server/.pnp
+/server/.pnp.js
+
+# testing
+/server/coverage
+
+# production
+/server/build
+
+# misc
+/server/.DS_Store
+/server/.env.local
+/server/.env.development.local
+/server/.env.test.local
+/server/.env.production.local
+
+/server/npm-debug.log*
+/server/yarn-debug.log*
+/server/yarn-error.log*
