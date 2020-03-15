@@ -14,20 +14,17 @@ const style = {
 export default class Receive extends React.Component {
     constructor() {
         super();
-        
         // create a new peer
-        this.peer = new Peer();
+        this.peer = new Peer('receiver', {
+            debug: 2
+        });
     }
 
     // recieve connections
     Connect() {
         this.peer.on('connection', (conn) => {
             conn.on('data', (data) => {
-                // Will print 'hi!'
                 console.log(data);
-            });
-            conn.on('open', () => {
-                conn.send('hello!');
             });
         });
     }

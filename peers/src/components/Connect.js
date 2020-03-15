@@ -16,30 +16,32 @@ const input = {
     padding: '10px 10px 10px 10px',
     height: '15px',
     alignSelf: 'center',
-    borderRadius: '10px',   
+    borderRadius: '10px',
+}
+
+const alert = {
+    color: 'red',
 }
 
 const button = {
     background: '#ffffff',
-  border: '2px #0e2b4d solid',
-  alignSelf: 'center',
-  fontSize: '50%',
-  borderRadius: '10px',
-  textAlign: 'center',
-  color: '#1d7786',
-  fontFamily: `'Poppins', sans-serif`,
-  padding: '10px 10px',
+    border: '2px #0e2b4d solid',
+    alignSelf: 'center',
+    fontSize: '50%',
+    borderRadius: '10px',
+    textAlign: 'center',
+    color: '#1d7786',
+    fontFamily: `'Poppins', sans-serif`,
+    padding: '10px 10px',
 }
 
 export default class Connect extends React.Component {
     constructor() {
         super();
-        // this.peer: Peer;
-        this.peer = new Peer('peerjs', {
+        this.peer = new Peer('connector', {
             debug: 2
-        });;
-        this.lastPeerId = null;
-        this.state = { key: '' };
+        });
+        this.state = { key: '', hasError: false, errorMessage: '' };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.initialize();
@@ -47,14 +49,7 @@ export default class Connect extends React.Component {
 
     initialize() {
         this.peer.on('open', function (id) {
-            // Workaround for peer.reconnect deleting previous id
-            if (this.peer.id === null) {
-                console.log('Received null id from peer open');
-                this.peer.id = this.lastPeerId;
-            } else {
-                this.lastPeerId = this.peer.id;
-            }
-            console.log('ID: ' + this.peer.id);
+            console.log(`${id} is listening for connections..`);
         });
     }
 
@@ -65,14 +60,18 @@ export default class Connect extends React.Component {
     handleSubmit(event) {
         console.log('A key was submitted: ' + this.state.key);
         event.preventDefault();
-        console.log('created a new peer ', this.peer.id);
         // connect to the peer
         this.connect(this.state.key)
     }
 
     // send connections
     connect(peerid) {
-        const conn = this.peer.connect(peerid);
+        const conn = this.peer.connect(peerid, { reliable: true }, function (err) {
+            if (err) {
+                // error handling -- maybe will work?
+                this.setState({ hasError: true, errorMessage: `Could not connect to ${peerid}` }); 
+            }
+        });
         conn.on('open', () => {
             conn.send('hi!');
         });
@@ -86,6 +85,9 @@ export default class Connect extends React.Component {
         // renders something here..
         return (
             <div className="peer-id" id="peer-id-form" style={style}>
+                <div className="alert" style={alert}>
+                    <p>{this.state.errorMessage}</p>
+                </div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         Enter Peer ID:
