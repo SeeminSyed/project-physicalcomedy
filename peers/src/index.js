@@ -1,21 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
 import App from './App';
-import * as serviceWorker from './serviceWorker';
-import Connect from './components/Connect';
-import Receive from './components/Receive';
+import Create from './components/Create';
 import NotFound from './pages/NotFound';
+import './index.css';
+
+import * as serviceWorker from './serviceWorker';
 
 // https://codeburst.io/getting-started-with-react-router-5c978f70df91
 const routing = (
     <Router>
         <div>
+            <ul>
+                <li>
+                    <Link to="/">Home</Link>
+                </li>
+                <li>
+                    <Link to="/create">Create</Link>
+                </li>
+            </ul>
+            {/* Switch component helps us to render the components only when path matches otherwise it fallbacks to the not found component. */}
             <Switch>
                 <Route exact path="/" component={App} />
-                <Route path="/connect" component={Connect} />
-                <Route path="/receive" component={Receive} />
+                <Route exact path="/create" component={Create} />
                 <Route component={NotFound} />
             </Switch>
         </div>
