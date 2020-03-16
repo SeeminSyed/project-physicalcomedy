@@ -1,5 +1,6 @@
 import React from 'react';
 import Peer from 'peerjs';
+import Words from './Words';
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 
 // css for this component
@@ -205,11 +206,8 @@ class Create extends React.Component {
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
             <video id="my-camera" width="300" height="300" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
             <video id="peer-camera" width="300" height="300" autoPlay="autoplay" className="mx-auto d-block"></video>
+            <Words></Words>
         </div>);
-        // return (<div className="peer" style={style}>Peer id: {this.peer.id}</div>);
     }
-    //     render() {
-    //         return <h1>Receive</h1>
-    //     }
 }
 export default Create
