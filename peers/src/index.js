@@ -12,18 +12,19 @@ import * as serviceWorker from './serviceWorker';
 const routing = (
     <Router>
         <div>
-            <ul>
+            {/* <ul>
                 <li>
                     <Link to="/">Home</Link>
                 </li>
                 <li>
                     <Link to="/create">Create</Link>
                 </li>
-            </ul>
+            </ul> */}
             {/* Switch component helps us to render the components only when path matches otherwise it fallbacks to the not found component. */}
             <Switch>
                 <Route exact path="/" component={App} />
-                <Route exact path="/create" component={Create} />
+                <Route exact path="/charades" component={Create} />
+                {/* <Route exact path="/pictionary" component={PictionaryComponent}/> */}
                 <Route component={NotFound} />
             </Switch>
         </div>
