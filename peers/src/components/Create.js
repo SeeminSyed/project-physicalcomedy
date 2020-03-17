@@ -7,9 +7,9 @@ import * as handTrack from "handtrackjs"
 // handtrack.js
 // TODO: PRoperly cite 
 
-let xpos = 0;
+// let xpos = 0;
+// let ypos = 0;
 let nxpos = 0
-let ypos = 0;
 let nypos = 0;
 
 // css for this component
@@ -43,10 +43,10 @@ const button = {
     padding: '10px 10px',
 }
 
-const vid = {
-    WebkitTransform: 'scaleX(-1)',
-    transform: 'scaleX(-1)',
-}
+// const vid = {
+//     WebkitTransform: 'scaleX(-1)',
+//     transform: 'scaleX(-1)',
+// }
 
 class Create extends React.Component {
     constructor() {
@@ -67,6 +67,7 @@ class Create extends React.Component {
             // highlightText: "Attention needed",
             doodlecolor: "#1780DC",
             // saveddoodles: []
+            savedlines: []
         };
         // this.connect = this.connect.bind(this);
         this.onReceiveStream = this.onReceiveStream.bind(this);
@@ -107,8 +108,8 @@ class Create extends React.Component {
 
         // this.video.current.width = this.media.width
         // this.video.current.height = this.media.height;
-        xpos = 300 / 2;
-        ypos = 225 / 2;
+        nxpos = 300 / 2;
+        nypos = 225 / 2;
 
         // this.cav = document.getElementById("canvas")
         // this.cav.width = 450
@@ -217,12 +218,16 @@ class Create extends React.Component {
 
             //   }
             // if (this.canvas.current) {
+            context.drawImage(video, 0, 0, feed.width, feed.height);
             this.runDrawPredictions(predictions);
             // console.log("FPS", this.state.model.getFPS())
             // $("#fps").text("FPS: " + model.getFPS())
             window.requestAnimationFrame(() => {
                 if (this.state.doodler) {
                     let video = document.getElementById('my-camera');
+
+                    this.drawDoodle(context);
+                    
                     this.runDetection(video);
                     // let feed = document.getElementById('feed');
                     // this.runDetection(feed);
@@ -253,24 +258,31 @@ class Create extends React.Component {
 
         console.log('number of detections: ', predictions.length);
         for (let i = 0; i < predictions.length; i++) {
-            xpos = nxpos;
-            ypos = nypos;
+            // xpos = nxpos;
+            // ypos = nypos;
             nxpos = predictions[i].bbox[0] + (predictions[i].bbox[2] / 2);
-            nypos = predictions[i].bbox[1] + (predictions[i].bbox[3] / 2)
-            this.drawDoodle(canvasContext)
+            nypos = predictions[i].bbox[1] + (predictions[i].bbox[3] / 2);
+            // this.drawDoodle(canvasContext);
         }
     }
 
     drawDoodle(canvasContext) {
-        canvasContext.beginPath(); // begin
-        canvasContext.lineWidth = 5;
-        canvasContext.lineCap = 'round';
-        canvasContext.strokeStyle = this.state.doodlecolor;
-        canvasContext.moveTo(xpos, ypos); // from
+        let a = this.state.savedlines;
+        a.push({ xpos: nxpos, ypos: nypos });
+        this.setState({ savedlines: a });
+        console.log("a", a);
+        for (let i = 1; i < a.length; i++) {
+            // console.log("a", a);
+            canvasContext.beginPath(); // begin
+            canvasContext.lineWidth = 5;
+            canvasContext.lineCap = 'round';
+            canvasContext.strokeStyle = this.state.doodlecolor;
+            canvasContext.moveTo(a[i - 1].xpos, a[i - 1].ypos); // from
 
-        canvasContext.lineTo(nxpos, nypos); // to
-        canvasContext.stroke(); // draw it!
-        canvasContext.closePath();
+            canvasContext.lineTo(a[i].xpos, a[i].ypos); // to
+            canvasContext.stroke(); // draw it!
+            canvasContext.closePath();
+        }
     }
 
     // feedback loop of getting cam stream from hidden video and applying to canvas on sceen
@@ -302,15 +314,18 @@ class Create extends React.Component {
     // on button click, start gesture detection doodling on canvas
     videoButtonClick(e) {
         // let self = this;
+        this.setState({ savedlines: [] });
         if (this.state.doodler) {
             this.setState({ doodler: false });
             // this.streamFeed();
             // handTrack.stopVideo()
         } else {
             this.setState({ doodler: true });
-            let feed = document.getElementById('feed');
-            let context = feed.getContext('2d');
-            context.clearRect(0, 0, feed.width, feed.height);
+
+            // let feed = document.getElementById('feed');
+            // let context = feed.getContext('2d');
+            // context.clearRect(0, 0, feed.width, feed.height);
+
 
             // handTrack.startVideo(this.video.current).then(function (status) {
             // if (status) {
@@ -372,7 +387,7 @@ class Create extends React.Component {
             </div>
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
             <button id="videobutton" style={button} onClick={this.videoButtonClick.bind(this)} >  {this.state.doodler ? "▩ Stop Video Doodle" : " ▶ ️ Start Video Doodle"} </button>
-            <video id="my-camera" /*style={vid}*/ WebkitTransform='scaleX(-1)' transform='scaleX(-1)' width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+            <video id="my-camera" /*style={vid}*/ width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
             <canvas /*ref={this.feed}*/ id="feed"></canvas>
             <video id="peer-camera" width="300" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
         </div >);
