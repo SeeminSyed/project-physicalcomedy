@@ -39,7 +39,7 @@ const video = {
     width: 'auto',
 }
 
-class Create extends React.Component {
+class Peer2Peer extends React.Component {
     constructor() {
         super();
         this.state = { id: '', value: '' };
@@ -209,4 +209,4 @@ class Create extends React.Component {
         </div>);
     }
 }
-export default Create;
+export default Peer2Peer;
