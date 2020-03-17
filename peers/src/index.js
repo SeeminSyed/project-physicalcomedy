@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
 import App from './App';
 import Charades from './pages/Charades';
 import NotFound from './pages/NotFound';
@@ -13,14 +13,17 @@ import * as serviceWorker from './serviceWorker';
 const routing = (
     <Router>
         <div>
-            {/* <ul>
+            <ul>
                 <li>
                     <Link to="/">Home</Link>
                 </li>
                 <li>
-                    <Link to="/create">Create</Link>
+                    <Link to="/charades">Charades</Link>
                 </li>
-            </ul> */}
+                <li>
+                    <Link to="/pictionary">Pictionary</Link>
+                </li>
+            </ul>
             {/* Switch component helps us to render the components only when path matches otherwise it fallbacks to the not found component. */}
             <Switch>
                 <Route exact path="/" component={App} />
