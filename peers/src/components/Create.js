@@ -268,7 +268,8 @@ class Create extends React.Component {
 
     drawDoodle(canvasContext) {
         let a = this.state.savedlines;
-        a.push({ xpos: nxpos, ypos: nypos });
+        // nxpos = 300 - nxpos;
+        a.push({ xpos: 300 - nxpos, ypos: nypos });
         this.setState({ savedlines: a });
         console.log("a", a);
         for (let i = 1; i < a.length; i++) {
