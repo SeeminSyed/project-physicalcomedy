@@ -19,10 +19,6 @@ const input = {
     borderRadius: '10px',
 }
 
-const alert = {
-    color: 'red',
-}
-
 const button = {
     background: '#ffffff',
     border: '2px #0e2b4d solid',
@@ -69,7 +65,7 @@ export default class Connect extends React.Component {
         const conn = this.peer.connect(peerid, { reliable: true }, function (err) {
             if (err) {
                 // error handling -- maybe will work?
-                this.setState({ hasError: true, errorMessage: `Could not connect to ${peerid}` }); 
+                this.setState({ hasError: true, errorMessage: `Could not connect to ${peerid}` });
             }
         });
         conn.on('open', () => {
@@ -77,17 +73,9 @@ export default class Connect extends React.Component {
         });
     }
 
-    // make a call here
-
-    // show the incoming video stream
-
     render() {
-        // renders something here..
         return (
             <div className="peer-id" id="peer-id-form" style={style}>
-                <div className="alert" style={alert}>
-                    <p>{this.state.errorMessage}</p>
-                </div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
                         Enter Peer ID:
