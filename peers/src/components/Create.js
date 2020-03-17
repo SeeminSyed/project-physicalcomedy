@@ -1,6 +1,9 @@
 import React from 'react';
 import Peer from 'peerjs';
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
+// https://www.andismith.com/blogs/2012/07/extending-getusermedia/
+// handtrack.js
+// TODO: PRoperly cite 
 
 // css for this component
 const style = {
@@ -42,8 +45,14 @@ class Create extends React.Component {
         this.requestLocalVideo = this.requestLocalVideo.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.streamFeed = this.streamFeed.bind(this);
+
         this.peer_stream = null;
         this.localStream = null;
+        this.canvasStream = null;
+
+
+        // this.feed = React.createRef();
 
         // reciever is the id that other peers will use to connect to this peer
         this.peer = new Peer();
@@ -67,62 +76,58 @@ class Create extends React.Component {
         // Set the given stream as the video source
         // video.src = window.URL.createObjectURL(stream);
         video.srcObject = stream;
+    }
 
-        // Store a global reference of the stream
-        this.peer_stream = stream;
+    streamFeed() {
+        let feed = document.getElementById('feed');
+        let context = feed.getContext('2d');
+        let video = document.getElementById('my-camera');
+        feed.width = video.width;
+        feed.height = video.height;
+        video.style.display = 'none';
+        this.canvasStream = feed.captureStream();
+        window.requestAnimationFrame(() =>
+            this.streamFeed()
+        );
+        context.drawImage(video, 0, 0, feed.width, feed.height);
+        // context.drawImage(video, 0, 0);
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        // console.log('A value was submitted: ' + this.state.value);
-        // console.log('Connecting to a new peer ', "receiver", " to say hi!");
-
         // Request a videocall the other user
-        // document.getElementById("call").addEventListener("click", () => {
         console.log('Calling to ' + this.state.value);
         console.log(this.peer);
-
-        let call = this.peer.call(this.state.value, this.localStream);
+        let video = document.getElementById('peer-camera');
+        video.style.display = 'block';
+        let call = this.peer.call(this.state.value, this.canvasStream);
 
         call.on('stream', (stream) => {
             this.peer_stream = stream;
-
             this.onReceiveStream(stream, 'peer-camera');
+
+            // Handle when the call finishes
+            call.on('close', () => {
+                alert("The videocall has finished");
+                let video = document.getElementById('peer-camera');
+                video.style.display = 'none';
+            });
+
         });
-        // }, false);
-
-        // On click the connect button, initialize connection with peer
-        // document.getElementById("connect-to-peer-btn").addEventListener("click", () => {
-        // username = document.getElementById("name").value;
-        // peer_id = document.getElementById("peer_id").value;
-
-        // if (this.state.value) {
-        //     conn = this.peer.connect(this.state.value, {
-        //         metadata: {
-        //             'username': username
-        //         }
-        //     });
-
-        //     conn.on('data', handleMessage);
-        // } else {
-        //     alert("You need to provide a peer to connect with !");
-        //     return false;
-        // }
-
-        // document.getElementById("chat").className = "";
-        // document.getElementById("connection-form").className += " hidden";
-        // }, false);
-
     }
 
     // recieve connections
     componentDidMount() {
+
+        let video = document.getElementById('peer-camera');
+        video.style.display = 'none';
 
         // Initialize application by requesting your own video to test !
         this.requestLocalVideo({
             success: (stream) => {
                 this.localStream = stream;
                 this.onReceiveStream(stream, 'my-camera');
+                this.streamFeed();
             },
             error: (err) => {
                 alert("Cannot get access to your camera and video !");
@@ -138,16 +143,6 @@ class Create extends React.Component {
             });
         });
 
-        // // When someone connects to your session:
-        // this.peer.on('connection', (connection) => {
-        //     let conn = connection;
-
-        //     // Use the handleMessage to callback when a message comes in
-        //     conn.on('data', this.handleMessage());
-
-        //     // Hide peer_id field and set the incoming peer id as value
-        // });
-
         this.peer.on('error', (err) => {
             alert("An error ocurred with peer: " + err);
             console.error(err);
@@ -160,7 +155,9 @@ class Create extends React.Component {
 
             if (acceptsCall) {
                 // Answer the call with your own video/audio stream
-                call.answer(this.localStream);
+                let video = document.getElementById('peer-camera');
+                video.style.display = 'block';
+                call.answer(this.canvasStream);
 
                 // Receive data
                 call.on('stream', (stream) => {
@@ -173,6 +170,8 @@ class Create extends React.Component {
                 // Handle when the call finishes
                 call.on('close', () => {
                     alert("The videocall has finished");
+                    let video = document.getElementById('peer-camera');
+                    video.style.display = 'none';
                 });
 
                 // use call.close() to finish a call
@@ -188,7 +187,6 @@ class Create extends React.Component {
         this.setState({ value: event.target.value });
     }
 
-
     render() {
         // render the stream here
         // console.log(this.peer.id);
@@ -203,10 +201,10 @@ class Create extends React.Component {
                 </form>
             </div>
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
-            <video id="my-camera" width="300" height="300" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
-            <video id="peer-camera" width="300" height="300" autoPlay="autoplay" className="mx-auto d-block"></video>
+            <video id="my-camera" width="300" height="225" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
+            <canvas /*ref={this.feed}*/ id="feed"></canvas>
+            <video id="peer-camera" width="300" height="225" autoPlay="autoplay" className="mx-auto d-block"></video>
         </div>);
-        // return (<div className="peer" style={style}>Peer id: {this.peer.id}</div>);
     }
     //     render() {
     //         return <h1>Receive</h1>
