@@ -8,9 +8,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 function App() {
   return (
     <div className="App">
-      <ErrorBoundary>
-        <Create/>
-      </ErrorBoundary>
+      To play charades, add /charades to the url.
+      To play pictionary, add /pictionary to the url.
     </div>
   );
 }
