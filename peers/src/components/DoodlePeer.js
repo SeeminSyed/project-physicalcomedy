@@ -1,7 +1,8 @@
 import React from 'react';
 import Peer from 'peerjs';
-import * as handTrack from "handtrackjs"
+import * as handTrack from "handtrackjs";
 import Words from './Words';
+
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
@@ -415,6 +416,7 @@ class DoodlePeer extends React.Component {
                 </form>
             </div>
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
+            <Words></Words>
             <button id="videobutton" style={button} onClick={this.videoButtonClick.bind(this)} >  {this.state.doodler ? "▩ Stop Video Doodle" : " ▶ ️ Start Video Doodle"} </button>
             <video id="my-camera" /*style={vid}*/ width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
             <canvas /*ref={this.feed}*/ id="feed"></canvas>
