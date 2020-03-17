@@ -34,11 +34,15 @@ const button = {
     padding: '10px 10px',
 }
 
+const video = {
+    margin: '10px 10px',
+    width: 'auto',
+}
+
 class Create extends React.Component {
     constructor() {
         super();
         this.state = { id: '', value: '' };
-        // this.connect = this.connect.bind(this);
         this.onReceiveStream = this.onReceiveStream.bind(this);
         this.requestLocalVideo = this.requestLocalVideo.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -49,7 +53,6 @@ class Create extends React.Component {
         // reciever is the id that other peers will use to connect to this peer
         this.peer = new Peer();
         console.log("peer", this.peer);
-        // this.connect();
     }
 
     // Starts the request of the camera and microphone
@@ -75,9 +78,6 @@ class Create extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        // console.log('A value was submitted: ' + this.state.value);
-        // console.log('Connecting to a new peer ', "receiver", " to say hi!");
-
         // Request a videocall the other user
         // document.getElementById("call").addEventListener("click", () => {
         console.log('Calling to ' + this.state.value);
@@ -126,7 +126,7 @@ class Create extends React.Component {
                 this.onReceiveStream(stream, 'my-camera');
             },
             error: (err) => {
-                alert("Cannot get access to your camera and video !");
+                // alert("Cannot get access to camera and video!");
                 console.error(err);
             }
         });
@@ -181,7 +181,6 @@ class Create extends React.Component {
                 console.log("Call denied !");
             }
         });
-
     }
 
     // show the incoming video stream
@@ -192,7 +191,6 @@ class Create extends React.Component {
 
     render() {
         // render the stream here
-        // console.log(this.peer.id);
         return (<div>
             <div className="peer-id" id="peer-id-form" style={style}>
                 <form onSubmit={this.handleSubmit}>
@@ -204,10 +202,11 @@ class Create extends React.Component {
                 </form>
             </div>
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
-            <video id="my-camera" width="300" height="300" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
-            <video id="peer-camera" width="300" height="300" autoPlay="autoplay" className="mx-auto d-block"></video>
             <Words></Words>
+            <video style={video} id="my-camera" height="300" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
+            <video style={video} id="peer-camera" width="300" height="300" autoPlay="autoplay" className="mx-auto d-block"></video>
+
         </div>);
     }
 }
-export default Create
+export default Create;

@@ -73,12 +73,7 @@ export default class Connect extends React.Component {
         });
     }
 
-    // make a call here
-
-    // show the incoming video stream
-
     render() {
-        // renders something here..
         return (
             <div className="peer-id" id="peer-id-form" style={style}>
                 <form onSubmit={this.handleSubmit}>
