@@ -1,1 +1,1 @@
-web: web: node peers/src/index.js
+web: node peers/src/index.js
