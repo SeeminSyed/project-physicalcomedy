@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom'
@@ -28,7 +29,7 @@ const routing = (
             <Switch>
                 <Route exact path="/" component={App} />
                 <Route exact path="/charades" component={Charades} />
-                <Route exact path="/pictionary" component={Pictionary}/>
+                <Route exact path="/pictionary" component={Pictionary} />
                 <Route component={NotFound} />
             </Switch>
         </div>
