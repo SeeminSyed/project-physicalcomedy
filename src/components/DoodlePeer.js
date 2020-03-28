@@ -1,9 +1,8 @@
 import React from 'react';
 import Peer from 'peerjs';
 import * as handTrack from "handtrackjs";
-import Words from './Words';
+// import Words from './Words';
 import Button from 'react-bootstrap/Button';
-import ResponsiveEmbed from 'react-bootstrap/ResponsiveEmbed'
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
@@ -66,12 +65,12 @@ class DoodlePeer extends React.Component {
     }
 
 
-    componentWillUnmount() {
-        console.log("Page unmounting disposing model")
-        this.state.model.dispose();
-        this.peer.disconnect();
-        this.peer.destroy();
-    }
+    // componentWillUnmount() { TODO!!!
+    //     console.log("Page unmounting disposing model")
+    //     this.state.model.dispose();
+    //     this.peer.disconnect();
+    //     this.peer.destroy();
+    // }
 
     // on component mounting, set connections and events
     componentDidMount() {
@@ -118,7 +117,7 @@ class DoodlePeer extends React.Component {
         this.peer.on('call', (call) => {
             this.camOpen();
             this.call = call;
-            // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
+            // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?"); TODO!!!!!
             let acceptsCall = true;
 
             if (acceptsCall) {
@@ -453,11 +452,11 @@ class DoodlePeer extends React.Component {
                 <Button variant="dark" id="videobutton" onClick={this.videoButtonClick.bind(this)} >  {this.state.doodler ? "▩ Stop Video Doodle" : " ▶ ️ Start Video Doodle"} </Button>
                 <Button variant="dark" onClick={this.endCall.bind(this)} >End Call</Button>
                 {/* <Words></Words> */}
-                <div style={{ width: '100%', height: 'auto' }}>
-                    <video id="my-camera" /*style={vid}*/ width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+                <div style={{ width: '50%', height: 'auto' }}>
+                    <video id="my-camera" /*style={vid}*/ width="50%" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
                     <canvas /*ref={this.feed}*/ id="feed"></canvas>
+                    <video id="peer-camera" width="50%" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
                 </div>
-                <video id="peer-camera" width="300" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
             </div >);
     }
     //     render() {
