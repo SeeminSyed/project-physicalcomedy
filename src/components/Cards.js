@@ -119,40 +119,44 @@ export default class Cards extends React.Component {
 
     render() {
         return (
-            <Accordion defaultActiveKey="0">
-                {/* Create a room */}
-                <Card border="info" style={{ width: '500px', margin: '10px' }}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            Create a new Room!
+            <div>
+                <Accordion defaultActiveKey="0">
+                    {/* Create a room */}
+                    <Card border="info" style={{ width: '500px', margin: '10px' }}>
+                        <Card.Header>
+                            <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                Create a new Room!
                             </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="0">
-                        <Card.Body>
-                            <Card.Text>
-                                Create a new room and get your mates to join in!
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <Card.Body>
+                                <Card.Text>
+                                    Create a new room and get your mates to join in!
                                     <CardOneForm />
-                            </Card.Text>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-                {/* Join a room */}
-                <Card border="info" style={{ width: '500px', margin: '10px' }}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            Join a Room!
+                                </Card.Text>
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
+                <Accordion defaultActiveKey="0">
+                    {/* Join a room */}
+                    <Card border="info" style={{ width: '500px', margin: '10px' }}>
+                        <Card.Header>
+                            <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                                Join a Room!
                             </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                        <Card.Body>
-                            <Card.Text>
-                                Join a room and start playing with your mates!
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="1">
+                            <Card.Body>
+                                <Card.Text>
+                                    Join a room and start playing with your mates!
                         </Card.Text>
-                            <CardTwoForm />
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-            </Accordion>
+                                <CardTwoForm />
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
+            </div>
         );
     }
 }
