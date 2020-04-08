@@ -8,7 +8,7 @@ const app = express();
 const datamuse = require('datamuse');
 
 // serve React files
-app.use(express.static('static'));
+app.use(express.static(path.join(__dirname, 'static/build')));
 
 app.get('/', (req, res, next) => res.send('Hello world!'));
 
@@ -56,7 +56,7 @@ app.get('/words/:type/:word', function (req, res, next) {
 });
 
 const http = require('http');
-const PORT = 3000;
+const PORT = 3001;
 
 const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
