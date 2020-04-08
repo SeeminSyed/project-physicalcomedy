@@ -1,5 +1,8 @@
 # Physical Comedy
 
+## Deployed link:
+https://physicalcomedy.heroku.com 
+
 ## Team Members
 - Sakina Gadriwala
 - Seemin Syed
