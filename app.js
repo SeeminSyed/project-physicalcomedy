@@ -56,7 +56,7 @@ app.get('/words/:type/:word', function (req, res, next) {
 });
 
 const http = require('http');
-const PORT = (process.env.PORT || 3001);
+const PORT = (process.env.PORT || 5000);
 
 const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
