@@ -5,15 +5,15 @@ const footer = {
     left: '0',
     bottom: '0',
     width: '100%',
-    height: '5%',
     backgroundColor: '#e2e2e2',
     color: 'black',
-    textAlign: 'center'
+    textAlign: 'center',
+    padding: '5px'
 };
 
 const text = {
     flexDirection: 'column',
-    padding: '25px'
+    textAlign: 'center',
 };
 
 export default class Footer extends React.Component {
@@ -23,7 +23,7 @@ export default class Footer extends React.Component {
             <footer style={footer}>
                 <text style={text}>
                     Find the source code at <a rel="noopener noreferrer" target="_blank" href="https://github.com/UTSCC09/project-physicalcomedy">Github</a> |
-                    <a href="/credits"> Credits</a>
+                    And credits at <a href="/credits"> Credits</a>
                 </text>
             </footer>
         )

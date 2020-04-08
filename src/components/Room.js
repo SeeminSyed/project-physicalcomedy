@@ -12,28 +12,20 @@ const header = {
     color: 'white',
     fontSize: '30px',
     display: 'flex',
-    flex: '1',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
 
 };
 
-const text = {
-    flexDirection: 'column',
-    padding: '25px'
-};
-
 class GameHeader extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            // id: props.id
-        };
     }
 
     ctrlC(e) {
-        // allows copy paste
+        // https://stackoverflow.com/questions/56704138/i-want-to-create-a-copy-to-clipboard-using-react-js
+        // copy room code to clipboard
         this.textArea.select();
         document.execCommand('copy');
         e.target.focus();
@@ -42,7 +34,7 @@ class GameHeader extends React.Component {
     render() {
         return (
             <header style={header}>
-                <text>Physical Comedy </text>
+                <text><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
                 <div>
                     <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id}</text>
                     <textarea
@@ -52,8 +44,6 @@ class GameHeader extends React.Component {
                             color: '#17a2b8',
                             fontSize: '1px',
                             border: 'none',
-                            // width: '0',
-                            // height: '0',
                             resize: 'none',
                         }}
                         ref={(textarea) => this.textArea = textarea}
@@ -95,8 +85,10 @@ class ChatBox extends React.Component {
     }
 
     render() {
-        return (<div>
-        </div>);
+        return (
+            <div>
+            </div>
+        );
     }
 }
 
@@ -107,8 +99,10 @@ class GameOptions extends React.Component {
     }
 
     render() {
-        return (<div>
-        </div>);
+        return (
+            <div>
+            </div>
+        );
     }
 }
 
@@ -119,8 +113,10 @@ class CallOptions extends React.Component {
     }
 
     render() {
-        return (<div>
-        </div>);
+        return (
+            <div>
+            </div>
+        );
     }
 }
 
@@ -131,8 +127,10 @@ class Streams extends React.Component {
     }
 
     render() {
-        return (<div>
-        </div>);
+        return (
+            <div>
+            </div>
+        );
     }
 }
 
@@ -163,10 +161,10 @@ class Room extends React.Component {
         return (
             <div>
                 <GameHeader
-                    id="dfghjk"
+                    id={this.state.localId}
                 />
-                {/* <div id="body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div id="left" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <div id="body" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div id="left" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <GameOptions
                         // ...
                         />
@@ -174,7 +172,7 @@ class Room extends React.Component {
                         // ...
                         />
                     </div>
-                    <div id="right" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Streams
                         // ...
                         />
@@ -182,7 +180,7 @@ class Room extends React.Component {
                         // ...
                         />
                     </div>
-                </div> */}
+                </div>
             </div>
         );
     }
