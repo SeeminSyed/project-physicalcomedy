@@ -51,7 +51,8 @@ class Peer2Peer extends React.Component {
         this.localStream = null;
 
         // reciever is the id that other peers will use to connect to this peer
-        this.peer = new Peer();
+        let port = (process.env.PORT || 5000)
+        this.peer = new Peer({ host: '/', port: port, path: '/myapp/peerjs' })
         console.log("peer", this.peer);
     }
 
