@@ -55,16 +55,24 @@ app.get('/words/:type/:word', function (req, res, next) {
     });
 });
 
-const http = require('http');
+const https = require('https');
 const PORT = (process.env.PORT || 5000);
+// from Lab 7
+var privateKey = fs.readFileSync('server.key');
+var certificate = fs.readFileSync('server.crt');
+var config = {
+    key: privateKey,
+    cert: certificate
+};
 
-const server = http.createServer(app);
+const server = https.createServer(config, app);
 const peerServer = ExpressPeerServer(server, {
     debug: true,
-    path: '/myapp'
+    path: '/myapp',
 });
+
 app.use('/peerjs', peerServer);
 server.listen(PORT, function (err) {
     if (err) console.log(err);
-    else console.log("HTTP server on http://localhost:%s", PORT);
+    else console.log("HTTPS server on https://localhost:%s", PORT);
 });
