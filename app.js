@@ -55,17 +55,19 @@ app.get('/words/:type/:word', function (req, res, next) {
     });
 });
 
-const https = require('https');
+// const https = require('https');
+const http = require('http');
 const PORT = (process.env.PORT || 5000);
 // from Lab 7
-var privateKey = fs.readFileSync('server.key');
-var certificate = fs.readFileSync('server.crt');
-var config = {
-    key: privateKey,
-    cert: certificate
-};
+// var privateKey = fs.readFileSync('server.key');
+// var certificate = fs.readFileSync('server.crt');
+// var config = {
+//     key: privateKey,
+//     cert: certificate
+// };
 
-const server = https.createServer(config, app);
+// const server = https.createServer(config, app);
+const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
     debug: true,
     path: '/myapp',
@@ -74,5 +76,5 @@ const peerServer = ExpressPeerServer(server, {
 app.use('/peerjs', peerServer);
 server.listen(PORT, function (err) {
     if (err) console.log(err);
-    else console.log("HTTPS server on https://localhost:%s", PORT);
+    else console.log("HTTP server on http://localhost:%s", PORT);
 });
