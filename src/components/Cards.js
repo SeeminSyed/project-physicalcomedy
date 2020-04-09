@@ -132,11 +132,11 @@ export default class Cards extends React.Component {
                             Create a new Room!
                             <Instructions text={this.createRoom}/>
                             </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="0">
-                        <Card.Body>
-                            <Card.Text>
-                                Create a new room and get your mates to join in!
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="0">
+                            <Card.Body>
+                                <Card.Text>
+                                    Create a new room and get your mates to join in!
                                     <CardOneForm />
                             </Card.Text>
                         </Card.Body>
@@ -148,18 +148,20 @@ export default class Cards extends React.Component {
                         <Accordion.Toggle as={Button} variant="link" eventKey="1">
                             Join a Room!
                             <Instructions text={this.joinRoom}/>
+
                             </Accordion.Toggle>
-                    </Card.Header>
-                    <Accordion.Collapse eventKey="1">
-                        <Card.Body>
-                            <Card.Text>
-                                Join a room and start playing with your mates!
+                        </Card.Header>
+                        <Accordion.Collapse eventKey="1">
+                            <Card.Body>
+                                <Card.Text>
+                                    Join a room and start playing with your mates!
                         </Card.Text>
-                            <CardTwoForm />
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-            </Accordion>
+                                <CardTwoForm />
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
+            </div>
         );
     }
 }

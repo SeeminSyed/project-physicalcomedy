@@ -7,6 +7,7 @@ import Charades from './pages/Charades';
 import Credits from './pages/Credits';
 import NotFound from './pages/NotFound';
 import Pictionary from './pages/Pictionary';
+import GameRoom from './pages/GameRoom';
 import './index.css';
 
 import * as serviceWorker from './serviceWorker';
@@ -22,6 +23,7 @@ const routing = (
                 <Route exact path="/credits" component={Credits} />
                 <Route exact path="/charades" component={Charades} />
                 <Route exact path="/pictionary" component={Pictionary} />
+                <Route exact path="/room" component={GameRoom} />
                 <Route component={NotFound} />
             </Switch>
         </div>
