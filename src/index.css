@@ -9,6 +9,15 @@ header {
   font-family: 'Raleway', sans-serif;
 }
 
+h3 {
+  font-family: 'Raleway', sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0px 0px 20px;
+  font-size: 30px;
+  color: #095663;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
