@@ -9,8 +9,8 @@ export default class Instructions extends React.Component {
             <OverlayTrigger
                 placement="right"
                 delay={{ show: 250, hide: 400 }}
-                overlay={ <Tooltip id="button-tooltip"> {this.props.text} </Tooltip> }>
-                <MdHelp>Need Help?</MdHelp>
+                overlay={<Tooltip id="button-tooltip"> {this.props.text} </Tooltip>}>
+                <MdHelp style={{ color: '#808080' }} >Need Help?</MdHelp>
             </OverlayTrigger>
         );
     }

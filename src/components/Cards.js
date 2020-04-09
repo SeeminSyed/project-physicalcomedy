@@ -78,7 +78,7 @@ function CardOneForm() {
                     </InputGroup>
                 </Col>
             </Form.Group>
-            <Button type="submit" variant="primary">Create Room</Button>
+            <Button type="submit" variant="info">Create Room</Button>
         </Form>
     );
 
@@ -113,24 +113,24 @@ function CardTwoForm() {
                     </InputGroup>
                 </Col>
             </Form.Group>
-            <Button type="submit" variant="primary">Join a Room!</Button>
+            <Button type="submit" variant="info">Join a Room!</Button>
         </Form>
     );
 }
 
 export default class Cards extends React.Component {
-    createRoom = "You will be provided a code of your room on submission. Share the code with your mates to play Charades (default) or Pictionary.";
-    joinRoom = "Enter the code your mate gave you to join their room. There, you will be able to play Charades (default) or Pictionary.";
+    createRoom = "You will be provided a code of your room on submission. Share the code with your mates.";
+    joinRoom = "Enter the code your mate gave you to join their room.";
 
     render() {
         return (
-            <Accordion defaultActiveKey="0">
-                {/* Create a room */}
-                <Card border="info" style={{ width: '500px', margin: '10px' }}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                            Create a new Room!
-                            <Instructions text={this.createRoom}/>
+            <div>
+                <Accordion defaultActiveKey="0">
+                    {/* Create a room */}
+                    <Card border="info" style={{ width: '500px', margin: '10px' }}>
+                        <Card.Header>
+                            <Accordion.Toggle as={Button} variant="link" style={{ color: '#17a2b8' }} eventKey="0">
+                                Create a new Room! <Instructions text={this.createRoom} />
                             </Accordion.Toggle>
                         </Card.Header>
                         <Accordion.Collapse eventKey="0">
@@ -138,16 +138,17 @@ export default class Cards extends React.Component {
                                 <Card.Text>
                                     Create a new room and get your mates to join in!
                                     <CardOneForm />
-                            </Card.Text>
-                        </Card.Body>
-                    </Accordion.Collapse>
-                </Card>
-                {/* Join a room */}
-                <Card border="info" style={{ width: '500px', margin: '10px' }}>
-                    <Card.Header>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                            Join a Room!
-                            <Instructions text={this.joinRoom}/>
+                                </Card.Text>
+                            </Card.Body>
+                        </Accordion.Collapse>
+                    </Card>
+                </Accordion>
+                <Accordion defaultActiveKey="0">
+                    {/* Join a room */}
+                    <Card border="info" style={{ width: '500px', margin: '10px' }}>
+                        <Card.Header>
+                            <Accordion.Toggle as={Button} variant="link" style={{ color: '#17a2b8' }} eventKey="1">
+                                Join a Room! <Instructions text={this.joinRoom} />
 
                             </Accordion.Toggle>
                         </Card.Header>
