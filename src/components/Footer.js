@@ -8,7 +8,9 @@ const footer = {
     backgroundColor: '#e2e2e2',
     color: 'black',
     textAlign: 'center',
-    padding: '5px'
+    padding: '5px',
+    // flex: '0 0 50px',/*or just height:50px;*/
+    marginTop: 'auto'
 };
 
 const text = {
