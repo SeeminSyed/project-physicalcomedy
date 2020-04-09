@@ -4,10 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup'
+import InputGroup from 'react-bootstrap/InputGroup';
+import Instructions from './Instructions';
 
 function CardOneForm() {
     const [validate, setValidate] = useState(false);
+    let enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
+    let wordCategory = "You will get words based on the category you choose.";
+    let score = "Player who reaches this score first wins!";
+
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -23,7 +28,7 @@ function CardOneForm() {
         <Form noValidate validated={validate} onSubmit={handleSubmit} action="/charades">
             {/* enter a word */}
             <Form.Group as={Col} controlId="enter-word">
-                <Form.Label sm="10">Enter a word:</Form.Label>
+                <Form.Label sm="10">Enter a word: <Instructions text={enterWord} /> </Form.Label>
                 <Col sm="10">
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -36,7 +41,7 @@ function CardOneForm() {
             </Form.Group>
             {/* Choose a category */}
             <Form.Group as={Col} controlId="category">
-                <Form.Label sm="10">Choose a word category:</Form.Label>
+                <Form.Label sm="10">Choose a word category: <Instructions text={wordCategory} /></Form.Label>
                 <Col sm="10">
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -45,8 +50,6 @@ function CardOneForm() {
                         <Form.Control as="select">
                             <option>Nouns</option>
                             <option>Adjectives</option>
-                            <option>Verbs</option>
-                            <option>Adverbs</option>
                             <option>Synonyms</option>
                             <option>Antonyms</option>
                             <option>Rhymes</option>
@@ -58,7 +61,7 @@ function CardOneForm() {
             </Form.Group>
             {/* Score */}
             <Form.Group as={Col} controlId="score">
-                <Form.Label sm="10">Score:</Form.Label>
+                <Form.Label sm="10">Score: <Instructions text={score} /> </Form.Label>
                 <Col sm="10">
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -75,7 +78,7 @@ function CardOneForm() {
                     </InputGroup>
                 </Col>
             </Form.Group>
-            <Button type="submit" variant="primary">Create Room</Button> {/*href="/charades"*/}
+            <Button type="submit" variant="primary">Create Room</Button>
         </Form>
     );
 
@@ -97,7 +100,7 @@ function CardTwoForm() {
     return (
         <Form noValidate validated={validate} onSubmit={handleSubmit} action="/pictionary">
             <Form.Group as={Col} controlId="enter-word">
-                <Form.Label sm="10">Enter a Code:</Form.Label>
+                <Form.Label sm="10">Enter a Code: </Form.Label>
                 <Col sm="10">
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -116,6 +119,8 @@ function CardTwoForm() {
 }
 
 export default class Cards extends React.Component {
+    createRoom = "You will be provided a code of your room on submission. Share the code with your mates to play Charades (default) or Pictionary.";
+    joinRoom = "Enter the code your mate gave you to join their room. There, you will be able to play Charades (default) or Pictionary.";
 
     render() {
         return (
@@ -125,6 +130,7 @@ export default class Cards extends React.Component {
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="0">
                             Create a new Room!
+                            <Instructions text={this.createRoom}/>
                             </Accordion.Toggle>
                     </Card.Header>
                     <Accordion.Collapse eventKey="0">
@@ -141,6 +147,7 @@ export default class Cards extends React.Component {
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="1">
                             Join a Room!
+                            <Instructions text={this.joinRoom}/>
                             </Accordion.Toggle>
                     </Card.Header>
                     <Accordion.Collapse eventKey="1">
