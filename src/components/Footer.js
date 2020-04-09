@@ -1,4 +1,5 @@
 import React from 'react';
+import '../custom.css'
 
 const footer = {
     position: 'fixed',
@@ -24,8 +25,8 @@ export default class Footer extends React.Component {
         return (
             <footer style={footer}>
                 <text style={text}>
-                    Find the source code at <a style={{color: '#17a2b8'}} rel="noopener noreferrer" target="_blank" href="https://github.com/UTSCC09/project-physicalcomedy">Github</a> |
-                    And credits at <a style={{color: '#17a2b8'}} href="/credits"> Credits</a>
+                    Find the source code at <a rel="noopener noreferrer" target="_blank" href="https://github.com/UTSCC09/project-physicalcomedy">Github</a> |
+                    And credits at <a href="/credits"> Credits</a>
                 </text>
             </footer>
         )
