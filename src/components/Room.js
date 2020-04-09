@@ -211,6 +211,53 @@ class ChatBox extends React.Component {
     }
 }
 
+function PeerVideo(props) {
+    return (
+        <video id={props.id} width="100" height="100" autoPlay="autoplay" className="mx-auto d-block" style={{ margin: '10px 10px', width: 'auto', }} /*onClick={props.onClick}*/></video>
+    );
+}
+
+class Streams extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            localId: props.localId,
+            localName: props.localName,
+            localStream: props.localStream,
+            mute: props.mute,
+            camOn: props.camOn,
+            deafen: props.deafen,
+            peers: props.peers
+        };
+        // TODO: mute, deafen, camOn, peers
+    }
+
+    renderPeerVideo(peerName) {
+        return (
+            <PeerVideo
+                id={peerName}
+            // onClick={() => this.handleCanvasClick(peerName)}
+            />
+        );
+    }
+
+    render() {
+        return (
+            <div style={{ width: '50%', height: 'auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', alignContent: 'center', /*alignItems: 'center',*/ }}>
+                <video id="my-camera" width="50%" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+                <canvas id="feed"></canvas>
+                <div id="peers">
+                    {this.state.peers.map((peer) => (
+                        <div key={peer.id}>
+                            {this.renderPeerVideo(peer.name)}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+}
+
 class GameOptions extends React.Component {
     constructor(props) {
         super(props);
@@ -239,362 +286,37 @@ class CallOptions extends React.Component {
     }
 }
 
-class Streams extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
-    render() {
-        return (
-            <div>
-            </div>
-        );
-    }
-}
-
 class Room extends React.Component {
     constructor() {
         super();
+        // WHEN STATE CHANGES, THE COMPONENT RERENDER, SO BE CAREFUL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         this.state = {
             localId: 'harry',
-            messages: [
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "Write your guess!",
-                },
-                {
-                    name: "A",
-                    type: "local",
-                    text: "Lorem ipsum dolor sit amet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B joined!",
-                },
-                {
-                    name: "B",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "B left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C joined!",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D joined!",
-                },
-                {
-                    name: "C",
-                    type: "peer",
-                    text: "Praesent gravida rutrum sem at imperdiet. Mauris euismod tellus ut felis finibus elementum"
-                },
-                {
-                    name: "D",
-                    type: "peer",
-                    text: "Aliquam"
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "D left...",
-                },
-                {
-                    name: "",
-                    type: "meta",
-                    text: "C left...",
-                },
-            ],
+            localName: 'harry',
         };
 
+        // Objects used by composite components
+        this.localStream = null;
+        this.messages = [
+            {
+                name: "",
+                type: "meta",
+                text: "Write your guess here or just send messages to your mates!",
+            }
+        ];
+        this.peers = [
+            // {
+            //     id: '',
+            //     name: '',
+            //     stream: null,
+            // },
+        ];
+
+        // Function binding
+
         // make peer 
-        this.peer = new Peer();
-        console.log("peer", this.peer);
+        // this.peer = new Peer();
+        // console.log("peer", this.peer);
     }
 
     componentDidMount() {
@@ -613,11 +335,7 @@ class Room extends React.Component {
     sendMessage(message) {
         //TODO: add to messagelist and send to all other users
         console.log('message', message);
-        let tempMessages = this.state.messages;
-        tempMessages.push({ name: this.state.localId, type: "local", text: message })
-        this.setState({
-            messages: tempMessages
-        })
+        this.messages.push({ name: this.state.localId, type: "local", text: message })
     }
 
     render() {
@@ -629,13 +347,17 @@ class Room extends React.Component {
                 <div id="body" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', height: 'auto' }}>
                     <div id="left" className='bg-light page' style={{ display: 'flex', alignItems: 'stretch', flexBasis: '25%', }}>
                         <ChatBox
+                            // TODO: When peerlist update, send message to chat
                             onClick={this.sendMessage.bind(this)}
-                            messages={this.state.messages}
+                            messages={this.messages}
                         />
                     </div>
                     <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <Streams
-                        // ...
+                            localId={this.state.localId}
+                            localName={this.state.localName}
+                            localStream={this.state.localStream}
+                            peers={this.peers}
                         />
                         <div id="bottom" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <CallOptions
