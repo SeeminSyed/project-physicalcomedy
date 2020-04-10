@@ -479,22 +479,21 @@ class Room extends React.Component {
             console.error(err);
         });
 
-        // Handle the on receive connection event
-        // TODO: set conn to list
-        // REF:
-        // peer.on('connection', (dataConnection) => {
-        //     // Emitted when the connection is established and ready-to-use. 
-        //     dataConnection.on('open', () => {
-        //         // Emitted when data is received from the remote peer.
-        //         dataConnection.on('data', (data) => {
-        //             console.log('Received', data);
-        //         });
-        //         // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
-        //         dataConnection.send('Hello!');
-        //     });
-        //     // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
-        //     dataConnection.close();
-        // });
+        // Handle the on receive data event
+        this.peer.on('connection', (dataConnection) => {
+            // Emitted when the connection is established and ready-to-use. 
+            dataConnection.on('open', () => {
+                // Emitted when data is received from the remote peer.
+                dataConnection.on('data', (data) => {
+                    console.log('Received', data);
+                });
+                // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
+                // on connection, send list of messages to user
+                dataConnection.send('Hello!');
+            });
+            // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
+            // dataConnection.close();
+        });
 
         // handle the on receive call event
         this.peer.on('call', (mediaConnection) => {
@@ -541,17 +540,6 @@ class Room extends React.Component {
                 console.log("Call denied !");
             }
         });
-
-        // make connection to another peer
-        // REF:
-        // let conn = this.peer.connect(this.state.value, {
-        //     metadata: {
-        //         'username': username
-        //     }
-        // });
-        // conn.on('data', handleMessage());
-
-        // make call to another peer
 
     }
 
@@ -836,20 +824,31 @@ class Room extends React.Component {
         console.log(this.peer);
         let video = document.getElementById('peer-camera');
         video.style.display = 'inline-block';
-        let call = this.peer.call(this.state.value, this.canvasStream);
 
-        call.on('stream', (stream) => {
-            this.peer_stream = stream;
-            this.onReceiveStream(stream, 'peer-camera');
 
-            // Handle when the call finishes
-            call.on('close', () => {
-                alert("The videocall has finished");
-                let video = document.getElementById('peer-camera');
-                video.style.display = 'none';
+        // make connection to another peer
+        let conn = this.peer.connect(this.state.value, "hi");
+        conn.on('open', () => {
+            conn.on('data', (data) => {
+                console.log('Received', data);
             });
-
+            conn.send('hi!');
         });
+
+        // // make call to another peer TODO: what if this.canvasStream is null?
+        // let call = this.peer.call(this.state.value, this.canvasStream);
+        // call.on('stream', (stream) => {
+        //     this.peer_stream = stream;
+        //     this.onReceiveStream(stream, 'peer-camera');
+
+        //     // Handle when the call finishes
+        //     call.on('close', () => {
+        //         alert("The videocall has finished");
+        //         let video = document.getElementById('peer-camera');
+        //         video.style.display = 'none';
+        //     });
+
+        // });
     }
 
     // show the incoming video stream
