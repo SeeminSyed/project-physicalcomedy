@@ -4,12 +4,14 @@ import Peer from 'peerjs';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
+import { MdContentCopy, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
+import { FaMicrophoneSlash, FaMicrophone, FaDrawPolygon, FaPaintBrush } from 'react-icons/fa';
+import Instructions from './Instructions';
 
 class GameHeader extends React.Component {
     constructor(props) {
@@ -27,6 +29,7 @@ class GameHeader extends React.Component {
     render() {
         return (
             <header style={{
+                position: 'fixed',
                 padding: '20px',
                 background: '#17a2b8',
                 color: 'white',
@@ -34,14 +37,18 @@ class GameHeader extends React.Component {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                top: '0',
+                left: '0',
+                right: '0',
+                width: '100%',
             }}>
                 {/* Title */}
                 <text><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
                 {/* Room Code */}
                 <div>
-                    <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id}</text>
                     <textarea
+                        readOnly={true}
                         spellCheck='false'
                         style={{
                             background: '#17a2b8',
@@ -54,8 +61,9 @@ class GameHeader extends React.Component {
                         value={this.props.id}
                         onClick={this.ctrlC.bind(this)}
                     />
+                    <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
                     <OverlayTrigger
-                        // key=
+                        delay={{ show: 250, hide: 400 }}
                         placement='bottom'
                         overlay={
                             <Tooltip>
@@ -63,12 +71,12 @@ class GameHeader extends React.Component {
                             </Tooltip>
                         }
                     >
-                        <Button variant="outline-light" style={{ fontSize: '50%' }} onClick={this.ctrlC.bind(this)}>📋</Button>
+                        <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
                     </OverlayTrigger>
                 </div>
                 {/* Help button */}
                 <OverlayTrigger
-                    // key=
+                    delay={{ show: 250, hide: 400 }}
                     placement='bottom'
                     overlay={
                         <Tooltip>
@@ -162,7 +170,7 @@ class ChatBox extends React.Component {
                         </div>
                     </Container>
                     {/* Message Submit */}
-                    <Container id='messageForm' class="fixed-bottom" style={{ marginTop: '10px', marginBottom: '10px' }}>
+                    <Container id='messageForm' style={{ marginTop: '10px', marginBottom: '10px' }}>
                         <Form
                             inline
                             onSubmit={(e) => {
@@ -184,7 +192,7 @@ class ChatBox extends React.Component {
                                                 style={{ width: '100%' }}
                                                 required
                                                 type='text'
-                                                placeholder='Type guess here...'
+                                                placeholder='Type here...'
                                                 onChange={this.handleChange}
                                                 disabled='true'
                                             />
@@ -194,7 +202,7 @@ class ChatBox extends React.Component {
                                                 style={{ width: '100%' }}
                                                 required
                                                 type='text'
-                                                placeholder='Type guess here...'
+                                                placeholder='Type here...'
                                                 onChange={this.handleChange}
                                             />
                                         )
@@ -243,9 +251,12 @@ class Streams extends React.Component {
 
     render() {
         return (
-            <div style={{ width: '50%', height: 'auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly', alignContent: 'center', /*alignItems: 'center',*/ }}>
-                <video id="my-camera" width="50%" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
-                <canvas id="feed"></canvas>
+            <Container style={{
+                overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center', /*alignItems: 'center',*/
+                height: 'inherit',
+            }}>
+                <video id="my-camera" width="auto" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+                <canvas id="feed" ></canvas>
                 <div id="peers">
                     {this.state.peers.map((peer) => (
                         <div key={peer.id}>
@@ -253,7 +264,7 @@ class Streams extends React.Component {
                         </div>
                     ))}
                 </div>
-            </div>
+            </Container>
         );
     }
 }
@@ -267,11 +278,35 @@ class GameOptions extends React.Component {
     render() {
         return (
             <div>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    // if on, show off, if off, show on
+                    overlay={<Tooltip>Paint Mode {this.state.doodler ? "Off" : "On"}</Tooltip>}>
+                    {this.state.doodler ?
+                        // on
+                        <Button variant="info" /*onClick={this.videoButtonClick.bind*/ size="lg" >
+                            <FaPaintBrush />
+                        </Button>
+                        :
+                        // off
+                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
+                            <FaPaintBrush />
+                        </Button>
+                    }
+
+                </OverlayTrigger>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={<Tooltip>Get Another Word</Tooltip>}>
+                    <Button variant="info" id="wordbutton" /*onClick={this..bind*/ size="lg" ><MdRefresh /></Button>
+                </OverlayTrigger>
             </div>
         );
     }
 }
-
+// MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh,
 class CallOptions extends React.Component {
     constructor(props) {
         super(props);
@@ -281,6 +316,51 @@ class CallOptions extends React.Component {
     render() {
         return (
             <div>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    // if on, show off, if off, show on
+                    overlay={<Tooltip>Camera {this.state.localCam ? "On" : "Off"}</Tooltip>}>
+                    {this.state.localCam ?
+                        // on
+                        <Button variant="info" /*onClick={this.camButtonClick.bind*/ size="lg" >
+                            <MdVideocam />
+                        </Button>
+                        :
+                        // off
+                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
+                            <MdVideocamOff />
+                        </Button>
+                    }
+
+                </OverlayTrigger>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    // if on, show off, if off, show on
+                    overlay={<Tooltip>{this.state.local ? "UnMuted" : "Muted"}</Tooltip>}>
+                    {this.state.local ?
+                        // on
+                        <Button variant="info" /*onClick={this.camButtonClick.bind*/ size="lg" >
+                            <FaMicrophone />
+                        </Button>
+                        :
+                        // off
+                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
+                            <FaMicrophoneSlash />
+                        </Button>
+                    }
+
+                </OverlayTrigger>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    // if on, show off, if off, show on
+                    overlay={<Tooltip>End Call</Tooltip>}>
+                    <Button variant="danger" /*onClick={this.camButtonClick.bind*/ size="lg" >
+                        <MdCallEnd />
+                    </Button>
+                </OverlayTrigger>
             </div>
         );
     }
@@ -340,26 +420,39 @@ class Room extends React.Component {
 
     render() {
         return (
-            <div>
+            <div style={{
+                position: 'absolute',
+                top: 0, right: 0, bottom: 0, left: 0,
+            }}>
                 <GameHeader
                     id={this.state.localId}
                 />
-                <div id="body" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', height: 'auto' }}>
-                    <div id="left" className='bg-light page' style={{ display: 'flex', alignItems: 'stretch', flexBasis: '25%', }}>
+                <div id="body" className='bg-light page' style={{
+                    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+                    marginTop: '92px',
+                    // marginBottom: '85px',
+                    // position: 'absolute',
+                    // top: 0, right: 0, bottom: 0, left: 0,
+                }}>
+                    <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%'}}>
                         <ChatBox
                             // TODO: When peerlist update, send message to chat
                             onClick={this.sendMessage.bind(this)}
                             messages={this.messages}
                         />
                     </div>
-                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Streams
-                            localId={this.state.localId}
-                            localName={this.state.localName}
-                            localStream={this.state.localStream}
-                            peers={this.peers}
-                        />
-                        <div id="bottom" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%'}}>
+                        <div id='top' style={{ display: 'flex', height: '75vh',  flexBasis: '80%', maxWidth: '100%', }}>
+                            <Streams
+                                localId={this.state.localId}
+                                localName={this.state.localName}
+                                localStream={this.state.localStream}
+                                peers={this.peers}
+                            />
+                        </div>
+                        <div id="bottom" style={{ 
+                            display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center', 
+                            flexBasis: '20%', width: '100%', height: '100%'}}>
                             <CallOptions
                             // ...
                             />
@@ -370,7 +463,7 @@ class Room extends React.Component {
                         </div>
                     </div>
                 </div>
-            </div>
+            </ div>
         );
     }
 }
