@@ -269,43 +269,6 @@ class Streams extends React.Component {
     }
 }
 
-class GameOptions extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
-    render() {
-        return (
-            <div>
-                <OverlayTrigger
-                    placement="bottom"
-                    delay={{ show: 250, hide: 400 }}
-                    // if on, show off, if off, show on
-                    overlay={<Tooltip>Paint Mode {this.state.doodler ? "Off" : "On"}</Tooltip>}>
-                    {this.state.doodler ?
-                        // on
-                        <Button variant="info" /*onClick={this.videoButtonClick.bind*/ size="lg" >
-                            <FaPaintBrush />
-                        </Button>
-                        :
-                        // off
-                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
-                            <FaPaintBrush />
-                        </Button>
-                    }
-
-                </OverlayTrigger>
-                <OverlayTrigger
-                    placement="bottom"
-                    delay={{ show: 250, hide: 400 }}
-                    overlay={<Tooltip>Get Another Word</Tooltip>}>
-                    <Button variant="info" id="wordbutton" /*onClick={this..bind*/ size="lg" ><MdRefresh /></Button>
-                </OverlayTrigger>
-            </div>
-        );
-    }
-}
 // MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh,
 class CallOptions extends React.Component {
     constructor(props) {
@@ -320,15 +283,15 @@ class CallOptions extends React.Component {
                     placement="bottom"
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>Camera {this.state.localCam ? "On" : "Off"}</Tooltip>}>
-                    {this.state.localCam ?
+                    overlay={<Tooltip>Camera {this.props.camOn ? "On" : "Off"}</Tooltip>}>
+                    {this.props.camOn ?
                         // on
-                        <Button variant="info" /*onClick={this.camButtonClick.bind*/ size="lg" >
+                        <Button variant="info" onClick={this.props.toggleCam} size="lg" >
                             <MdVideocam />
                         </Button>
                         :
                         // off
-                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
+                        <Button variant="outline-secondary" onClick={this.props.toggleCam} size="lg" >
                             <MdVideocamOff />
                         </Button>
                     }
@@ -338,16 +301,16 @@ class CallOptions extends React.Component {
                     placement="bottom"
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>{this.state.local ? "UnMuted" : "Muted"}</Tooltip>}>
-                    {this.state.local ?
-                        // on
-                        <Button variant="info" /*onClick={this.camButtonClick.bind*/ size="lg" >
-                            <FaMicrophone />
+                    overlay={<Tooltip>{this.props.muted ? "Muted" : "UnMuted"}</Tooltip>}>
+                    {this.props.muted ?
+                        // off
+                        <Button variant="outline-secondary" onClick={this.props.toggleMute} size="lg" >
+                            <FaMicrophoneSlash />
                         </Button>
                         :
-                        // off
-                        <Button variant="outline-secondary" /*onClick={this.videoButtonClick.bind*/ size="lg" >
-                            <FaMicrophoneSlash />
+                        // on
+                        <Button variant="info" onClick={this.props.toggleMute} size="lg" >
+                            <FaMicrophone />
                         </Button>
                     }
 
@@ -356,10 +319,48 @@ class CallOptions extends React.Component {
                     placement="bottom"
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>End Call</Tooltip>}>
-                    <Button variant="danger" /*onClick={this.camButtonClick.bind*/ size="lg" >
+                    overlay={<Tooltip>End {this.props.hosting ? "Room" : "Call"}</Tooltip>}>
+                    <Button variant="danger" onClick={this.props.hosting ? this.props.endRoom : this.props.endCall} size="lg" >
                         <MdCallEnd />
                     </Button>
+                </OverlayTrigger>
+            </div>
+        );
+    }
+}
+
+class GameOptions extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    render() {
+        return (
+            <div>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    // if on, show off, if off, show on
+                    overlay={<Tooltip>Paint Mode {this.props.paintOn ? "On" : "Off"}</Tooltip>}>
+                    {this.props.paintOn ?
+                        // on
+                        <Button variant="info" onClick={this.props.toggleDraw} size="lg" >
+                            <FaPaintBrush />
+                        </Button>
+                        :
+                        // off
+                        <Button variant="outline-secondary" onClick={this.props.toggleDraw} size="lg" >
+                            <FaPaintBrush />
+                        </Button>
+                    }
+
+                </OverlayTrigger>
+                <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={<Tooltip>Get Another Word</Tooltip>}>
+                    <Button variant="info" id="wordbutton" onClick={this.props.newWord} size="lg" ><MdRefresh /></Button>
                 </OverlayTrigger>
             </div>
         );
@@ -429,20 +430,20 @@ class Room extends React.Component {
                 />
                 <div id="body" className='bg-light page' style={{
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-                    marginTop: '92px',
+                    marginTop: '89px',
                     // marginBottom: '85px',
                     // position: 'absolute',
                     // top: 0, right: 0, bottom: 0, left: 0,
                 }}>
-                    <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%'}}>
+                    <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%' }}>
                         <ChatBox
                             // TODO: When peerlist update, send message to chat
                             onClick={this.sendMessage.bind(this)}
                             messages={this.messages}
                         />
                     </div>
-                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%'}}>
-                        <div id='top' style={{ display: 'flex', height: '75vh',  flexBasis: '80%', maxWidth: '100%', }}>
+                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
+                        <div id='top' style={{ display: 'flex', height: '75vh', flexBasis: '80%', maxWidth: '100%', }}>
                             <Streams
                                 localId={this.state.localId}
                                 localName={this.state.localName}
@@ -450,14 +451,24 @@ class Room extends React.Component {
                                 peers={this.peers}
                             />
                         </div>
-                        <div id="bottom" style={{ 
-                            display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center', 
-                            flexBasis: '20%', width: '100%', height: '100%'}}>
+                        <div id="bottom" style={{
+                            display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
+                            flexBasis: '20%', width: '100%', height: '100%'
+                        }}>
                             <CallOptions
-                            // ...
+                                hosting={this.state.hosting}
+                                // TODO: add these
+                                endRoom
+                                endCall
+                                muted={this.muted}
+                                toggleMute
+                                camOn={this.camOn}
+                                toggleCam
                             />
                             <GameOptions
-                            // ...
+                                paintOn={this.paintOn}
+                                newWord
+                                toggleDraw
                             />
 
                         </div>
