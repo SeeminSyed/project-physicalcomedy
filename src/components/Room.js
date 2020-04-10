@@ -269,7 +269,6 @@ class Streams extends React.Component {
     }
 }
 
-// MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh,
 class CallOptions extends React.Component {
     constructor(props) {
         super(props);
@@ -374,6 +373,7 @@ class Room extends React.Component {
         this.state = {
             localId: 'harry',
             localName: 'harry',
+            hosting: true,
         };
 
         // Objects used by composite components
@@ -392,6 +392,9 @@ class Room extends React.Component {
             //     stream: null,
             // },
         ];
+        this.muted = true;
+        this.camOn = false;
+        this.paintOn = false;
 
         // Function binding
 
@@ -401,6 +404,8 @@ class Room extends React.Component {
     }
 
     componentDidMount() {
+        // TODO
+
         // create room open connection
         // on join, get message asking if allow
         // if allow: add to peerlist [end] & send all peers peerlist/streams
@@ -419,6 +424,31 @@ class Room extends React.Component {
         this.messages.push({ name: this.state.localId, type: "local", text: message })
     }
 
+    endRoom() {
+        //TODO
+    }
+
+    endCall() {
+        //TODO
+    }
+
+    toggleMute() {
+        //TODO
+    }
+
+    toggleCam() {
+        //TODO
+    }
+
+    newWord() {
+        //TODO
+    }
+
+    toggleDraw() {
+        //TODO
+    }
+
+    // https://getbootstrap.com/docs/4.4/utilities/position/
     render() {
         return (
             <div style={{
@@ -458,17 +488,18 @@ class Room extends React.Component {
                             <CallOptions
                                 hosting={this.state.hosting}
                                 // TODO: add these
-                                endRoom
-                                endCall
+                                endRoom={this.endRoom.bind(this)}
+                                endCall={this.endCall.bind(this)}
                                 muted={this.muted}
-                                toggleMute
+                                toggleMute={this.toggleMute.bind(this)}
                                 camOn={this.camOn}
-                                toggleCam
+                                toggleCam={this.toggleCam.bind(this)}
                             />
                             <GameOptions
+                                // TODO: add word somewhere in layout
                                 paintOn={this.paintOn}
-                                newWord
-                                toggleDraw
+                                newWord={this.newWord.bind(this)}
+                                toggleDraw={this.toggleDraw.bind(this)}
                             />
 
                         </div>
