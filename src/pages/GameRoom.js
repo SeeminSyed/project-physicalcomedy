@@ -6,9 +6,7 @@ export default class GameRoom extends React.Component {
     render() {
         return (
             <div className="App">
-                {/* <div className="body" style={{ display: 'flex', flexDirection: 'column-reverse', marginBottom: "0px", height: '100%'}}> */}
-                    <Room></Room>
-                {/* </div> */}
+                <Room></Room>
                 <Footer></Footer>
             </div >
         );

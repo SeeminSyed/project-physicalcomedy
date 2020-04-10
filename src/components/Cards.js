@@ -6,9 +6,12 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Instructions from './Instructions';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router';
 
 function CardOneForm() {
     const [validate, setValidate] = useState(false);
+    const [redirect, setRedirect] = useState(false);
     let enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
     let wordCategory = "You will get words based on the category you choose.";
     let score = "Player who reaches this score first wins!";
@@ -19,13 +22,25 @@ function CardOneForm() {
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+        } else {
+            setRedirect(true);
         }
 
         setValidate(true);
     };
 
+    if (redirect) {
+        return <Redirect push to={{
+            pathname: '/room',
+            state: {
+                hosting: true,
+                hostId: '',
+            }
+        }} />;
+    }
+
     return (
-        <Form noValidate validated={validate} onSubmit={handleSubmit} action="/charades">
+        <Form noValidate validated={validate} onSubmit={handleSubmit}>
             {/* enter a word */}
             <Form.Group as={Col} controlId="enter-word">
                 <Form.Label sm="10">Enter a word: <Instructions text={enterWord} /> </Form.Label>
@@ -86,19 +101,32 @@ function CardOneForm() {
 
 function CardTwoForm() {
     const [validate, setValidate] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+        } else {
+            setRedirect(true);
         }
 
         setValidate(true);
     };
 
+    if (redirect) {
+        return <Redirect push to={{
+            pathname: '/room',
+            state: {
+                hosting: false,
+                hostId: '',
+            }
+        }} />;
+    }
+
     return (
-        <Form noValidate validated={validate} onSubmit={handleSubmit} action="/pictionary">
+        <Form noValidate validated={validate} onSubmit={handleSubmit}>
             <Form.Group as={Col} controlId="enter-word">
                 <Form.Label sm="10">Enter a Code: </Form.Label>
                 <Col sm="10">

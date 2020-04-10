@@ -9,6 +9,7 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import { MdContentCopy, MdClear, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
+import Footer from '../components/Footer';
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
 
@@ -433,19 +434,12 @@ class Room extends React.Component {
 
         // make peer 
         this.peer = new Peer();
-        console.log("Current", this.peer);
+        console.log("Current peer", this.peer);
     }
 
     componentDidMount() {
-        // create room open connection
-        // on join, get message asking if allow
-        // if allow: add to peerlist [end] & send all peers peerlist/streams
-
-        // If host: 'end room' 
-        // send everyone empty list & clone connection
-        // new peer
-        // new connection
-
+        // TODO: get parameters from previous page
+        if (this.props.location.state) console.log("this.props.location.state", this.props.location.state);
 
         let video = document.getElementById('peer-camera');
         video.style.display = 'none';
@@ -859,10 +853,11 @@ class Room extends React.Component {
     // https://getbootstrap.com/docs/4.4/utilities/position/
     render() {
         return (
-            <div style={{
-                position: 'absolute',
-                top: 0, right: 0, bottom: 0, left: 0,
-            }}>
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0, right: 0, bottom: 0, left: 0,
+                }}>
                 <GameHeader
                     id={this.state.localId}
                 />
@@ -922,6 +917,7 @@ class Room extends React.Component {
                         </div>
                     </div>
                 </div>
+                <Footer></Footer>
             </ div>
         );
     }
