@@ -9,6 +9,8 @@ import Instructions from './Instructions';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
+let data = {word: '', category: 'Nouns', score: '', code: ''};
+
 function CardOneForm() {
     const [validate, setValidate] = useState(false);
     const [redirect, setRedirect] = useState(false);
@@ -34,11 +36,38 @@ function CardOneForm() {
             pathname: '/room',
             state: {
                 hosting: true,
-                hostId: '',
+                hostId: data,
             }
         }} />;
     }
 
+    const handleWordChange = (event) => {
+        event.persist();
+        if (event.nativeEvent.data === null) {
+            // remove the last character
+            data.word = data.word.slice(0, data.score.length-1);
+        } else {
+            data.word = data.word.concat(event.nativeEvent.data);
+        }
+        console.log(data);
+    }
+
+    const handleCategoryChange = (event) => {
+        event.persist();
+        data.category = event.target.selectedOptions[0].value;
+        console.log(data);
+    }
+
+    const handleScoreChange = (event) => {
+        event.persist();
+        if (event.nativeEvent.data === null) {
+            // remove the last character
+            data.score = data.score.slice(0, data.score.length-1);
+        } else {
+            data.score = data.score.concat(event.nativeEvent.data);
+        }
+        console.log(data);
+    }
     return (
         <Form noValidate validated={validate} onSubmit={handleSubmit}>
             {/* enter a word */}
@@ -49,7 +78,7 @@ function CardOneForm() {
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">w</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <Form.Control type="text" placeholder="Enter word" required />
+                        <Form.Control type="text" placeholder="Enter word" onChange={handleWordChange} required />
                         <Form.Control.Feedback type="invalid">Please enter a word.</Form.Control.Feedback>
                     </InputGroup>
                 </Col>
@@ -62,7 +91,7 @@ function CardOneForm() {
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">c</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <Form.Control as="select">
+                        <Form.Control as="select" onChange={handleCategoryChange}>
                             <option>Nouns</option>
                             <option>Adjectives</option>
                             <option>Synonyms</option>
@@ -83,6 +112,7 @@ function CardOneForm() {
                             <InputGroup.Text id="inputGroupPrepend">#</InputGroup.Text>
                         </InputGroup.Prepend>
                         <Form.Control
+                            onChange={handleScoreChange}
                             type="number"
                             min='5'
                             placeholder="Score"
@@ -120,9 +150,20 @@ function CardTwoForm() {
             pathname: '/room',
             state: {
                 hosting: false,
-                hostId: '',
+                hostId: data,
             }
         }} />;
+    }
+
+    const handleCodeChange = (event) => {
+        event.persist();
+        if (event.nativeEvent.data === null) {
+            // remove the last character
+            data.code = data.code.slice(0, data.score.length-1);
+        } else {
+            data.code = data.code.concat(event.nativeEvent.data);
+        }
+        console.log(data);
     }
 
     return (
@@ -134,7 +175,7 @@ function CardTwoForm() {
                         <InputGroup.Prepend>
                             <InputGroup.Text id="inputGroupPrepend">#</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <Form.Control type="text" placeholder="Enter code" required />
+                        <Form.Control type="text" placeholder="Enter code" onChange={handleCodeChange} required />
                         <Form.Control.Feedback type="invalid">
                             Please enter a code.
                         </Form.Control.Feedback>
