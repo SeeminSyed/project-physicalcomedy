@@ -252,9 +252,9 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center', /*alignItems: 'center',*/
                 height: 'inherit',
             }}>
-                <video id="my-camera" width="auto" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+                <video id="my-camera" width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
                 <canvas id="feed" ></canvas>
-                <video id="peer-camera" width="50%" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
+                <video id="peer-camera" width="300" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
                 {/* <div id="peers">
                     {this.state.myPeers.map((peer) => (
                         <div key={peer.id}>
@@ -384,6 +384,16 @@ class Room extends React.Component {
             modelLoaded: false,
             doodlecolor: "#17a2b8",
             savedlines: [],
+            // button
+            camOn: false,
+            muted: true,
+            paintOn: false,
+
+
+
+            // value TODO: delete
+            value: '',
+
         };
 
         // Objects used by composite components
@@ -413,9 +423,9 @@ class Room extends React.Component {
             // },
         ];
 
-        this.muted = true;
-        this.camOn = false;
-        this.paintOn = false;
+        // this.muted = true;
+        // this.camOn = false;
+        // this.paintOn = false;
         this.nxpos = 0;
         this.nypos = 0;
 
@@ -491,13 +501,15 @@ class Room extends React.Component {
             this.mediaConnection = mediaConnection;
 
             // TODO: remove toggle and clean up behavior
-            this.camOn = false;
-            this.toggleCam();
+            // this.camOn = false;
+            // this.setState({
+            //     camOn: false
+            // });
+            // this.toggleCam();
 
             // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
             // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
             let acceptsCall = true;
-
 
             if (acceptsCall) {
                 // Answer the call with your own video/audio stream
@@ -550,8 +562,8 @@ class Room extends React.Component {
     endCall() {
         //TODO
         this.onEndStream('peer-camera');
-        if (this.call) {
-            this.call.close();
+        if (this.mediaConnection) {
+            this.mediaConnection.close();
         }// this.peer_mediaConnection.getTracks().forEach((track) => {
         //     track.stop();
         // });
@@ -585,7 +597,7 @@ class Room extends React.Component {
         context.drawImage(video, 0, 0, feed.width, feed.height);
 
         window.requestAnimationFrame(() => {
-            if (this.paintOn) {
+            if (this.state.paintOn) {
                 let video = document.getElementById('my-camera');
                 this.runDetection(video);
                 // let feed = document.getElementById('feed');
@@ -660,9 +672,13 @@ class Room extends React.Component {
     }
 
     toggleCam() {
-        if (this.camOn) {
+        if (this.state.camOn) {
             // turning off
-            this.camOn = false;
+            // this.camOn = false;
+            this.setState({
+                camOn: false
+            });
+
             this.onEndStream('my-camera');
             this.localStream.getTracks().forEach((track) => {
                 track.stop();
@@ -670,7 +686,11 @@ class Room extends React.Component {
             console.log('this.localStream', this.localStream);
         } else {
             // turning on
-            this.camOn = true;
+            // this.camOn = true;
+            this.setState({
+                camOn: true
+            });
+
             this.requestLocalVideo();
         }
     }
@@ -693,7 +713,7 @@ class Room extends React.Component {
             // console.log("FPS", this.state.model.getFPS())
             // $("#fps").text("FPS: " + model.getFPS())
             window.requestAnimationFrame(() => {
-                if (this.paintOn) {
+                if (this.state.paintOn) {
                     let video = document.getElementById('my-camera');
 
                     this.drawDoodle(context);
@@ -705,7 +725,7 @@ class Room extends React.Component {
                     this.streamFeed();
                 }
             });
-            // if (this.paintOn && this.canvasStream) {
+            // if (this.state.paintOn && this.canvasStream) {
             //     window.requestAnimationFrame(function () {
             //         this.runDetection();
             //     });
@@ -758,33 +778,36 @@ class Room extends React.Component {
 
     // toggle gesture detection doodling on canvas
     toggleDraw() {
-        this.setState({ savedlines: [] });
-        if (this.paintOn) {
-            this.paintOn = false;
-            // this.streamFeed();
-            // handTrack.stopVideo()
-        } else {
-            this.paintOn = true;
+        this.setState({
+            savedlines: [],
+            paintOn: !this.state.paintOn
+        });
+        // if (this.paintOn) {
+        //     this.paintOn = false;
+        //     // this.streamFeed();
+        //     // handTrack.stopVideo()
+        // } else {
+        //     // this.paintOn = true;
 
-            // let feed = document.getElementById('feed');
-            // let context = feed.getContext('2d');
-            // context.clearRect(0, 0, feed.width, feed.height);
+        //     // let feed = document.getElementById('feed');
+        //     // let context = feed.getContext('2d');
+        //     // context.clearRect(0, 0, feed.width, feed.height);
 
 
-            // handTrack.startVideo(this.video.current).then(function (status) {
-            // if (status) {
-            // self.setState({ videoPlayStatus: true })
-            // this.runDetection();
-            // } else {
-            // console.log("Camera not available")
-            // self.setState({ highlightText: "Please enable camera to use video detection" })
-            // self.setState({ showHighlight: true })
-            // setTimeout(() => {
-            // self.setState({ showHighlight: false })
-            // }, 6000);
-            // }
-            // })
-        }
+        //     // handTrack.startVideo(this.video.current).then(function (status) {
+        //     // if (status) {
+        //     // self.setState({ videoPlayStatus: true })
+        //     // this.runDetection();
+        //     // } else {
+        //     // console.log("Camera not available")
+        //     // self.setState({ highlightText: "Please enable camera to use video detection" })
+        //     // self.setState({ showHighlight: true })
+        //     // setTimeout(() => {
+        //     // self.setState({ showHighlight: false })
+        //     // }, 6000);
+        //     // }
+        //     // })
+        // }
     }
 
     sendMessage(message) {
@@ -798,7 +821,40 @@ class Room extends React.Component {
     }
 
     toggleMute() {
+        // this.muted = !this.muted;
+        this.setState({
+            muted: !this.state.muted
+        });
         //TODO: mute toggle
+    }
+
+    // when peer key submitted, call should start and associated event listeners should be set
+    handleSubmit(event) {
+        event.preventDefault();
+        // Request a videocall the other user
+        console.log('Calling to ' + this.state.value);
+        console.log(this.peer);
+        let video = document.getElementById('peer-camera');
+        video.style.display = 'inline-block';
+        let call = this.peer.call(this.state.value, this.canvasStream);
+
+        call.on('stream', (stream) => {
+            this.peer_stream = stream;
+            this.onReceiveStream(stream, 'peer-camera');
+
+            // Handle when the call finishes
+            call.on('close', () => {
+                alert("The videocall has finished");
+                let video = document.getElementById('peer-camera');
+                video.style.display = 'none';
+            });
+
+        });
+    }
+
+    // show the incoming video stream
+    handleChange2(event) {
+        this.setState({ value: event.target.value });
     }
 
     // https://getbootstrap.com/docs/4.4/utilities/position/
@@ -824,6 +880,15 @@ class Room extends React.Component {
                             onClick={this.sendMessage.bind(this)}
                             messages={this.messages}
                         />
+                        <div className="peer-id" id="peer-id-form">
+                            <form onSubmit={this.handleSubmit.bind(this)}>
+                                <label>
+                                    Enter Peer ID:
+                                    <input type="text" value={this.state.value} onChange={this.handleChange2.bind(this)} required />
+                                </label>
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
                     </div>
                     <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
                         <div id='top' style={{ display: 'flex', height: '75vh', flexBasis: '80%', maxWidth: '100%', }}>
@@ -843,14 +908,14 @@ class Room extends React.Component {
                                 // TODO: add these
                                 endRoom={this.endRoom.bind(this)}
                                 endCall={this.endCall.bind(this)}
-                                muted={this.muted}
+                                muted={this.state.muted}
                                 toggleMute={this.toggleMute.bind(this)}
-                                camOn={this.camOn}
+                                camOn={this.state.camOn}
                                 toggleCam={this.toggleCam.bind(this)}
                             />
                             <GameOptions
                                 // TODO: add word somewhere in layout
-                                paintOn={this.paintOn}
+                                paintOn={this.state.paintOn}
                                 newWord={this.newWord.bind(this)}
                                 toggleDraw={this.toggleDraw.bind(this)}
                             />
