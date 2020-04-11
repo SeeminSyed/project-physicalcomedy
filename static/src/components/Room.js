@@ -601,11 +601,11 @@ class Room extends React.Component {
                                 this.peer_stream = peer_stream;
                                 // Display the stream of the other user in the peer-camera video element
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
-                            });
 
-                            // Handle when a remote peer ends the call
-                            this.mediaConnection.on('close', () => {
-                                // this.endCall();
+                                // Handle when a remote peer ends the call
+                                this.mediaConnection.on('close', () => {
+                                    this.endCall();
+                                });
                             });
 
                             // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
@@ -654,13 +654,13 @@ class Room extends React.Component {
                             this.mediaConnection.on('stream', (peer_stream) => {
                                 this.peer_stream = peer_stream;
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
-
+                                // Handle when a remote peer ends the call
+                                this.mediaConnection.on('close', () => {
+                                    this.endCall();
+                                });
                             });
 
-                            // Handle when a remote peer ends the call
-                            this.mediaConnection.on('close', () => {
-                                // this.endCall();
-                            });
+
                         });
                     }
                 }
