@@ -6,11 +6,12 @@ import Form from 'react-bootstrap/Form';
 import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
-import * as handTrack from "handtrackjs";
+import * as handTrack from 'handtrackjs';
 import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Peer from 'peerjs';
 import Tooltip from 'react-bootstrap/Tooltip';
+import Card from 'react-bootstrap/Card';
 import Words from './Words';
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
@@ -23,11 +24,11 @@ function HelpModal() {
 
     return (
         <>
-            <Button variant="outline-light" onClick={handleShow}> Help? </Button>
+            <Button variant='outline-light' onClick={handleShow}> Help? </Button>
             <Modal
                 show={show}
                 onHide={() => setShow(false)}
-                dialogClassName="modal-100w"
+                dialogClassName='modal-100w'
                 onEscapeKeyDown={() => setShow(false)}
             >
                 <Modal.Header closeButton>
@@ -41,8 +42,8 @@ function HelpModal() {
                             <li>
                                 Word and Category: Players are asked to act or doodle words related to
                                 the word and category that they entered.
-                                Example: If user entered "tree" as a word and chose "Nouns" as category,
-                                a possible word that a player can get is "trunk".
+                                Example: If user entered 'tree' as a word and chose 'Nouns' as category,
+                                a possible word that a player can get is 'trunk'.
                 </li>
                             <li>
                                 Score: A value of at least 5. Player that first reaches this value wins.
@@ -62,13 +63,13 @@ function HelpModal() {
                         <strong>Getting a New Word:</strong> To get a new word, click on the refresh icon <MdRefresh />. A new word
             will be displayed.
             <p></p>
-                        <strong>Making a Guess:</strong> To guess a word, type "\guess:[your guess]" into the text chat. If your guess
-            is correct you will receive a point. Example: "\guess: trunk" can something you type into your
-            text chat, where "trunk" is your guess.
+                        <strong>Making a Guess:</strong> To guess a word, type '\guess:[your guess]' into the text chat. If your guess
+            is correct you will receive a point. Example: '\guess: trunk' can something you type into your
+            text chat, where 'trunk' is your guess.
             </p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-primary" onClick={() => setShow(false)}>
+                    <Button variant='outline-primary' onClick={() => setShow(false)}>
                         Close
             </Button>
                 </Modal.Footer>
@@ -91,7 +92,7 @@ class GameHeader extends React.Component {
     render() {
         return (
             <header style={{
-                position: 'fixed',
+                // position: 'fixed',
                 padding: '20px',
                 background: '#17a2b8',
                 color: 'white',
@@ -106,7 +107,7 @@ class GameHeader extends React.Component {
                 width: '100%',
             }}>
                 {/* Title */}
-                <text /*onClick={this.props.onClick}*/><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
+                <text /* TODO: onClick={this.props.onClick}*/><span role='img' aria-label='emoji'>🎉</span> Physical Comedy </text>
                 {/* Room Code */}
                 {
                     this.props.hosting ?
@@ -125,17 +126,17 @@ class GameHeader extends React.Component {
                                 value={this.props.id}
                                 onClick={this.ctrlC.bind(this)}
                             />
-                            <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
+                            <text id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
                             <OverlayTrigger
                                 delay={{ show: 250, hide: 400 }}
                                 placement='bottom'
                                 overlay={
                                     <Tooltip>
                                         Copy to Clipboard.
-                                    </Tooltip>
+                    </Tooltip>
                                 }
                             >
-                                <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
+                                <Button variant='outline-light' style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
                             </OverlayTrigger>
                         </div>
                         : <div />
@@ -151,8 +152,7 @@ class ChatBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: props.localId,
-            turn: props.turn,
+            id: props.id,
             messageText: '',
             messages: props.messages,
         };
@@ -168,7 +168,7 @@ class ChatBox extends React.Component {
     }
 
     updateScroll() {
-        let element = document.getElementById("messageBoard");
+        let element = document.getElementById('messageBoard');
         element.scrollTop = element.scrollHeight;
     }
 
@@ -192,23 +192,24 @@ class ChatBox extends React.Component {
                     {/* Message log */}
                     <Container style={{ padding: '10px', marginTop: '10px' }}>
                         <div>
-                            <code id="messageBoard" style={{
+                            <code id='messageBoard' style={{
                                 display: 'block',
                                 height: '70vh',
                                 overflow: 'scroll',
                                 overflowX: 'hidden',
-                                width: "100%",
+                                width: '100%',
                             }}>
                                 {
-                                    this.props.messages.map(msg => {
+                                    this.state.messages.map(msg => {
+                                        console.log('msg', msg);
                                         switch (msg.type) {
-                                            case "admin":
+                                            case 'admin':
                                                 return (<li className='list-group list-group-flush' key={msg.name}>
                                                     <text style={{ color: '#808080' }}> >>> {msg.text} </text>
                                                 </li>)
                                             default:
-                                                console.log("msg.id/this.localId", msg.id, '/', this.localId);
-                                                if (msg.id === this.user) {
+                                                console.log('msg.id/this.state.id/this.props.id', msg.id, '/', this.props.id);
+                                                if (msg.id === this.props.id) {
                                                     return (<li className='list-group list-group-flush' key={msg.name}>
                                                         <text style={{ color: '#17b87e' }}> <strong>{msg.name}</strong>: {msg.text} </text>
                                                     </li>)
@@ -237,32 +238,16 @@ class ChatBox extends React.Component {
                         // style={{display: 'flex',  justifyContent: 'space-between', alignContent: 'stretch'}}
                         >
                             <Form.Group style={{ flex: 1 }}>
-
-                                {
-                                    this.props.turn ?
-                                        (
-                                            <Form.Control
-                                                value={this.state.messageText}
-                                                style={{ width: '100%' }}
-                                                required
-                                                type='text'
-                                                placeholder='Type here...'
-                                                onChange={this.handleChange}
-                                                disabled='true'
-                                            />
-                                        ) : (
-                                            <Form.Control
-                                                value={this.state.messageText}
-                                                style={{ width: '100%' }}
-                                                required
-                                                type='text'
-                                                placeholder='Type here...'
-                                                onChange={this.handleChange}
-                                            />
-                                        )
-                                }
+                                <Form.Control
+                                    value={this.state.messageText}
+                                    style={{ width: '100%' }}
+                                    required
+                                    type='text'
+                                    placeholder='Type here...'
+                                    onChange={this.handleChange}
+                                />
                             </Form.Group>
-                            {/* <Button variant="info" type='submit'> Send </Button> */}
+                            {/* <Button variant='info' type='submit'> Send </Button> */}
 
                         </Form>
                     </Container>
@@ -275,7 +260,7 @@ class ChatBox extends React.Component {
 
 function PeerVideo(props) {
     return (
-        <video id={props.id} width="100" height="100" autoPlay="autoplay" className="mx-auto d-block" style={{ margin: '10px 10px', width: 'auto', }} /*onClick={props.onClick}*/></video>
+        <video id={props.id} width='100' height='100' autoPlay='autoplay' className='mx-auto d-block' style={{ margin: '10px 10px', width: 'auto', }} /*onClick={props.onClick}*/></video>
     );
 }
 
@@ -309,10 +294,10 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center', /*alignItems: 'center',*/
                 height: 'inherit',
             }}>
-                <video id="my-camera" width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
-                <canvas id="feed" ></canvas>
-                <video id="peer-camera" width="300" height="225" autoPlay="autoplay" style={{ display: 'none', }} /*className="mx-auto d-block"*/></video>
-                {/* <div id="peers">
+                <video id='my-camera' width='300' height='225' autoPlay='autoplay' muted={true} /*className='mx-auto d-block'*/></video>
+                <canvas id='feed' ></canvas>
+                <video id='peer-camera' width='300' height='225' autoPlay='autoplay' style={{ display: 'none', }} /*className='mx-auto d-block'*/></video>
+                {/* <div id='peers'>
                     {this.state.myPeers.map((peer) => (
                         <div key={peer.id}>
                             {this.renderPeerVideo(peer.name)}
@@ -334,54 +319,54 @@ class CallOptions extends React.Component {
         return (
             <div>
                 <OverlayTrigger
-                    placement="top"
+                    placement='top'
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>Camera {this.props.camOn ? "On" : "Off"}</Tooltip>}>
+                    overlay={<Tooltip>Camera {this.props.camOn ? 'On' : 'Off'}</Tooltip>}>
                     {this.props.camOn ?
                         // on
-                        <Button variant="info" onClick={this.toggleCam.bind(this)} size="lg" >
+                        <Button variant='info' onClick={this.toggleCam.bind(this)} size='lg' >
                             <MdVideocam />
                         </Button>
                         :
                         // off
-                        <Button variant="outline-secondary" onClick={this.toggleCam.bind(this)} size="lg" >
+                        <Button variant='outline-secondary' onClick={this.toggleCam.bind(this)} size='lg' >
                             <MdVideocamOff />
                         </Button>
                     }
 
                 </OverlayTrigger>
                 <OverlayTrigger
-                    placement="top"
+                    placement='top'
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>{this.props.muted ? "Muted" : "UnMuted"}</Tooltip>}>
+                    overlay={<Tooltip>{this.props.muted ? 'Muted' : 'UnMuted'}</Tooltip>}>
                     {this.props.muted ?
                         // off
-                        <Button variant="outline-secondary" onClick={this.props.toggleMute} size="lg" >
+                        <Button variant='outline-secondary' onClick={this.props.toggleMute} size='lg' >
                             <FaMicrophoneSlash />
                         </Button>
                         :
                         // on
-                        <Button variant="info" onClick={this.props.toggleMute} size="lg" >
+                        <Button variant='info' onClick={this.props.toggleMute} size='lg' >
                             <FaMicrophone />
                         </Button>
                     }
 
                 </OverlayTrigger>
                 <OverlayTrigger
-                    placement="top"
+                    placement='top'
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>End {this.props.hosting ? "Room" : "Call"}</Tooltip>}>
+                    overlay={<Tooltip>End {this.props.hosting ? 'Room' : 'Call'}</Tooltip>}>
                     {this.props.hosting ?
                         // host
-                        <Button variant="danger" onClick={this.props.endRoom} size="lg" >
+                        <Button variant='danger' onClick={this.props.endRoom} size='lg' >
                             <MdExitToApp />
                         </Button>
                         :
                         // not host
-                        <Button variant="danger" onClick={this.props.endCall} size="lg" >
+                        <Button variant='danger' onClick={this.props.endCall} size='lg' >
                             <MdCallEnd />
                         </Button>
                     }
@@ -395,34 +380,41 @@ class CallOptions extends React.Component {
 class GameOptions extends React.Component {
 
     render() {
-        return (
-            <div>
-                <OverlayTrigger
-                    placement="top"
-                    delay={{ show: 250, hide: 400 }}
-                    // if on, show off, if off, show on
-                    overlay={<Tooltip>Paint Mode {this.props.paintOn ? "On" : "Off"}</Tooltip>}>
-                    {this.props.paintOn ?
-                        // on
-                        <Button variant="info" onClick={this.props.toggleDraw} size="lg" >
-                            <FaPaintBrush />
-                        </Button>
-                        :
-                        // off
-                        <Button variant="outline-secondary" onClick={this.props.toggleDraw} size="lg" >
-                            <FaPaintBrush />
-                        </Button>
-                    }
+        if (this.props.myTurn) {
+            return (
+                <div>
+                    <OverlayTrigger
+                        placement='top'
+                        delay={{ show: 250, hide: 400 }}
+                        // if on, show off, if off, show on
+                        overlay={<Tooltip>Paint Mode {this.props.paintOn ? 'On' : 'Off'}</Tooltip>}>
+                        {this.props.paintOn ?
+                            // on
+                            <Button variant='info' onClick={this.props.toggleDraw} size='lg' >
+                                <FaPaintBrush />
+                            </Button>
+                            :
+                            // off
+                            <Button variant='outline-secondary' onClick={this.props.toggleDraw} size='lg' >
+                                <FaPaintBrush />
+                            </Button>
+                        }
 
-                </OverlayTrigger>
-                <OverlayTrigger
-                    placement="top"
-                    delay={{ show: 250, hide: 400 }}
-                    overlay={<Tooltip>Get Another Word</Tooltip>}>
-                    <Button variant="outline-info" id="wordbutton" onClick={this.props.newWord} size="lg" ><MdRefresh /></Button>
-                </OverlayTrigger>
-            </div>
-        );
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                        placement='top'
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={<Tooltip>Get Another Word</Tooltip>}>
+                        <Button variant='outline-info' id='wordbutton' onClick={this.props.newWord} size='lg' ><MdRefresh /></Button>
+                    </OverlayTrigger>
+                    <div></div>
+                </div>
+            );
+        } else {
+            return (
+                <div></div>
+            );
+        }
     }
 }
 
@@ -435,10 +427,13 @@ class Room extends React.Component {
             localId: '',
             localName: '',
             hosting: null,
+
+            // from homepage
             starterWord: '',
             category: '',
             winningScore: 0,
             hostId: '',
+
             // handtrackjs
             modelParams: {
                 flipHorizontal: true,   // flip e.g for video  
@@ -448,7 +443,7 @@ class Room extends React.Component {
             },
             model: null,
             modelLoaded: false,
-            doodlecolor: "#17a2b8",
+            doodlecolor: '#17a2b8',
             savedlines: [],
 
             // buttons
@@ -459,12 +454,18 @@ class Room extends React.Component {
             // lists
             messages: [
                 {
-                    id: "",
-                    name: "",
-                    type: "admin",
-                    text: "Write your guess here or just send messages to your mates!",
+                    id: '',
+                    name: '',
+                    type: 'admin',
+                    text: 'Write your guess by typing \guess: and the word you guess or just send messages to your mates!',
                 }
-            ]
+            ],
+
+            // Game
+            myTurn: true,
+            currentWord: '',
+            myScore: 0,
+            otherScore: null,
 
         };
 
@@ -481,21 +482,22 @@ class Room extends React.Component {
 
         this.backlogMessages = [];
 
-        this.myPeers = [
-            // {
-            //     peerId: '',
-            //     name: '',
-            //     call: null,
-            //     dataConnection: null,
-            //     mediaConnection: null,
-            //     stream: null
-            // },
-        ];
+        // this.myPeers = [
+        //     // {
+        //     //     //     peerId: '',
+        //     //     //     name: '',
+        //     //     //     call: null,
+        //     //     //     dataConnection: null,
+        //     //     //     mediaConnection: null,
+        //     //     //     stream: null
+        //     // },
+        // ];
 
         // Function binding
         this.adminMessage = this.adminMessage.bind(this);
         this.endRoom = this.endRoom.bind(this);
         this.endCall = this.endCall.bind(this);
+        this.verifyComment = this.verifyComment.bind(this)
         this.sendMessage = this.sendMessage.bind(this);
         this.toggleMute = this.toggleMute.bind(this);
         this.toggleCam = this.toggleCam.bind(this);
@@ -504,14 +506,14 @@ class Room extends React.Component {
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
-        console.log("Current peer", this.peer.id);
+        console.log('Current peer', this.peer.id);
 
         // load handtrack model
-        console.log("loading model...");
+        console.log('loading model...');
         handTrack.load(this.state.modelParams).then(loadedModel => {
             this.setState({ model: loadedModel });
             this.setState({ modelLoaded: true });
-            console.log("model loaded", this.state.model);
+            console.log('model loaded', this.state.model);
         });
 
         // generic error handling TODO: Clarify!!!
@@ -519,11 +521,11 @@ class Room extends React.Component {
             switch (err.type) {
                 case 'peer-unavailable': // if host not exist, alert and redirect to home
                     alert("The room you're looking to join doesn't exist... Are you sure you have the right Room Code? ");
-                    console.log("redirect to homepage");
-                    window.location.replace("../");
+                    console.log('redirect to homepage');
+                    window.location.replace('../');
                     break;
                 default:
-                    alert("An error ocurred with peer: " + err);
+                    alert('An error ocurred with peer: ' + err);
                     console.error(err);
                     break;
             }
@@ -533,7 +535,7 @@ class Room extends React.Component {
     componentDidMount() {
         // set up peer connection to the SERVER
         this.peer.on('open', (localId) => {
-            console.log("peer id", localId);
+            console.log('peer id', localId);
             this.setState({
                 localId: localId,
                 localName: localId,
@@ -541,7 +543,7 @@ class Room extends React.Component {
 
             if (this.props.location.state) {
 
-                console.log("this.props.location.state", this.props.location.state);
+                console.log('this.props.location.state', this.props.location.state);
                 if (this.props.location.state.hosting) {
                     this.setState({
                         hosting: true,
@@ -566,16 +568,30 @@ class Room extends React.Component {
                                 // data.map((temp) => console.log('Received', temp));
                                 // TODO: when message received, add to personal message list
                                 data.map((temp) => {
-                                    let tempMessages = this.state.messages;
-                                    tempMessages.push(temp);
-                                    this.setState({
-                                        messages: tempMessages,
-                                    })
+                                    switch (temp.type) {
+                                        case 'meta': {
+                                            // update score
+                                            this.setState({
+                                                otherScore: temp.text,
+                                                myTurn: false,
+                                            });
+                                            break;
+                                        }
+                                        default: {
+                                            let tempMessages = this.state.messages;
+                                            tempMessages.push(temp);
+                                            this.setState({
+                                                messages: tempMessages,
+                                            });
+                                            break;
+                                        }
+                                    }
                                 });
                             });
                             // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
                             // on connection, send list of messages to user
                             // this.dataConnection.send('Hello!');
+                            if (this.state.myTurn) this.adminMessage("host, it's your turn.");
                         });
                         // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
                         // dataConnection.close();
@@ -587,7 +603,7 @@ class Room extends React.Component {
 
                         // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
                         let acceptsCall = true;
-                        acceptsCall = window.confirm("Videocall incoming, do you want to accept it ?");
+                        acceptsCall = window.confirm('Videocall incoming, do you want to accept it ?');
 
                         if (acceptsCall) {
                             // Answer the call with your own video/audio stream
@@ -601,23 +617,23 @@ class Room extends React.Component {
                                 this.peer_stream = peer_stream;
                                 // Display the stream of the other user in the peer-camera video element
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
-
-                                // Handle when a remote peer ends the call
-                                this.mediaConnection.on('close', () => {
-                                    this.endCall();
-                                });
+                            });
+                            // Handle when a remote peer ends the call
+                            this.mediaConnection.on('close', () => {
+                                this.endCall();
                             });
 
                             // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
                             // this.mediaConnection.close();
                         } else {
-                            console.log("Call denied !");
+                            console.log('Call denied !');
                         }
                     });
 
                 } else {
                     this.setState({
                         hosting: false,
+                        myTurn: false,
                         hostId: this.props.location.state.data.code,
                     });
 
@@ -625,7 +641,7 @@ class Room extends React.Component {
                     if (!this.state.camOn) {
                         this.toggleCam(() => {
 
-                            // console.log("callback from toggleCam");
+                            // console.log('callback from toggleCam');
 
                             // make connection to host, data and media
                             let video = document.getElementById('peer-camera');
@@ -633,19 +649,33 @@ class Room extends React.Component {
                             console.log('Calling to ', this.state.hostId);
 
                             // make connection to another peer TODO: add metadata
-                            this.dataConnection = this.peer.connect(this.state.hostId, "hi");
+                            this.dataConnection = this.peer.connect(this.state.hostId, 'hi');
                             this.dataConnection.on('open', () => {
                                 this.dataConnection.on('data', (data) => {
                                     // data.map((temp) => console.log('Received', temp));
                                     // TODO: when message received, add to personal message list
                                     data.map((temp) => {
-                                        let tempMessages = this.state.messages;
-                                        tempMessages.push(temp);
-                                        this.setState({
-                                            messages: tempMessages,
-                                        })
+                                        switch (temp.type) {
+                                            case 'meta': {
+                                                // update score
+                                                this.setState({
+                                                    otherScore: temp.text,
+                                                    myTurn: false,
+                                                });
+                                                break;
+                                            }
+                                            default: {
+                                                let tempMessages = this.state.messages;
+                                                tempMessages.push(temp);
+                                                this.setState({
+                                                    messages: tempMessages,
+                                                });
+                                                break;
+                                            }
+                                        }
                                     });
                                 });
+                                this.adminMessage('peer has joined~');
                                 // this.dataConnection.send('hi!');
                             });
 
@@ -654,20 +684,21 @@ class Room extends React.Component {
                             this.mediaConnection.on('stream', (peer_stream) => {
                                 this.peer_stream = peer_stream;
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
-                                // Handle when a remote peer ends the call
+
+                                // Handle when the call finishes
                                 this.mediaConnection.on('close', () => {
                                     this.endCall();
                                 });
-                            });
 
+                            });
 
                         });
                     }
                 }
             } else {
                 // was not directed from home
-                console.log("redirect to homepage");
-                window.location.replace("../");
+                console.log('redirect to homepage');
+                window.location.replace('../');
             }
         });
     }
@@ -689,10 +720,10 @@ class Room extends React.Component {
         if (this.state.camOn) {
             this.toggleCam();
         }
-        alert("The videocall has finished");
+        alert('The videocall has finished');
         this.peer.destroy();
-        console.log("redirect to homepage");
-        window.location.replace("../");
+        console.log('redirect to homepage');
+        window.location.replace('../');
     }
 
     endCall() {
@@ -712,10 +743,10 @@ class Room extends React.Component {
         if (this.state.camOn) {
             this.toggleCam();
         }
-        alert("The videocall has finished");
+        alert('The videocall has finished');
         this.peer.destroy();
-        console.log("redirect to homepage");
-        window.location.replace("../");
+        console.log('redirect to homepage');
+        window.location.replace('../');
     }
 
     // Handle the providen stream (video and audio) to the desired video element
@@ -806,7 +837,7 @@ class Room extends React.Component {
             this.onReceiveStream(stream, 'my-camera');
             callbacks ? this.streamFeed(() => callbacks()) : this.streamFeed();
         }).catch((err) => {
-            alert("Cannot get access to your camera and video! Be warned that you cannot play unless your camera is on...");
+            alert('Cannot get access to your camera and video! Be warned that you cannot play unless your camera is on...');
             console.error(err);
             this.setState({
                 camOn: false,
@@ -838,7 +869,8 @@ class Room extends React.Component {
             // turning off
             // this.camOn = false;
             this.setState({
-                camOn: false
+                camOn: false,
+                muted: true
             });
 
             this.onEndStream('my-camera');
@@ -850,7 +882,8 @@ class Room extends React.Component {
             // turning on
             // this.camOn = true;
             this.setState({
-                camOn: true
+                camOn: true,
+                muted: true
             });
 
             console.log('callbacks', callbacks);
@@ -873,8 +906,8 @@ class Room extends React.Component {
             // if (this.canvas.current) {
             context.drawImage(video, 0, 0, feed.width, feed.height);
             this.runDrawPredictions(predictions);
-            // console.log("FPS", this.state.model.getFPS())
-            // $("#fps").text("FPS: " + model.getFPS())
+            // console.log('FPS', this.state.model.getFPS())
+            // $('#fps').text('FPS: ' + model.getFPS())
             window.requestAnimationFrame(() => {
                 if (this.state.paintOn) {
                     let video = document.getElementById('my-camera');
@@ -924,9 +957,9 @@ class Room extends React.Component {
         // nxpos = 300 - nxpos;
         newLines.push({ xpos: 300 - this.nxpos, ypos: this.nypos });
         this.setState({ savedlines: newLines });
-        console.log("newLine", newLines);
+        console.log('newLine', newLines);
         for (let i = 1; i < newLines.length; i++) {
-            // console.log("newLine", newLine);
+            // console.log('newLine', newLine);
             canvasContext.beginPath(); // begin
             canvasContext.lineWidth = 5;
             canvasContext.lineCap = 'round';
@@ -947,11 +980,48 @@ class Room extends React.Component {
         });
     }
 
+    verifyComment(message) {
+        // if message.includes('\guess:'), correct and my turn
+        if (message.includes('\\guess:') && message.includes(this.state.currentWord) && this.state.myTurn) {
+            // sendMessage
+            this.sendMessage(message);
+            // adminMessage
+            this.adminMessage("You're right, ", (this.state.hosting ? 'host' : 'peer'), "! It's your turn now~");
+            // updateScore
+            this.updateScore();
+            // if my score >= winningScore
+            if (this.state.myScore >= this.state.winningScore) {
+                // (this.state.hosting ? 'host' : 'peer') won! But you can keep playing~
+                this.adminMessage((this.state.hosting ? 'host' : 'peer'), ' won! But you can keep playing~');
+            }
+        } else {
+            this.sendMessage(message);
+        }
+    }
+
+    updateScore() {
+        let ms = this.state.myScore + 1;
+        this.setState({
+            myScore: ms,
+            myTurn: true,
+        });
+
+        let temp = { id: '', name: '', type: 'meta', text: this.state.myscore };
+
+        if (this.dataConnection) {
+            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+            this.dataConnection.send([temp]);
+            this.backlogMessages = [];
+        } else {
+            this.backlogMessages.push(temp);
+        }
+    }
+
     sendMessage(message) {
         // push new message to my messagelist then send to others
         // TODO: add to messagelist and send to all other users
         console.log('message', message);
-        let temp = { id: this.state.localId, name: (this.state.hosting ? "host" : "peer"), type: '', text: message };
+        let temp = { id: this.state.localId, name: (this.state.hosting ? 'host' : 'peer'), type: 'public', text: message };
         let tempMessages = this.state.messages;
         tempMessages.push(temp);
         this.setState({
@@ -971,9 +1041,9 @@ class Room extends React.Component {
         // push new message to my messagelist then send to others
         // TODO: add to messagelist and send to all other users
         console.log('message', message);
-        let temp = { id: '', name: '', type: 'meta', text: message };
+        let temp = { id: '', name: '', type: 'admin', text: message };
         let tempMessages = this.state.messages;
-        tempMessages.push(temp[0]);
+        tempMessages.push(temp);
         this.setState({
             messages: tempMessages,
         })
@@ -991,38 +1061,45 @@ class Room extends React.Component {
     }
 
     toggleMute() {
-        // this.muted = !this.muted;
+        // line order matters here
+        this.localStream.getAudioTracks()[0].enabled = this.state.muted;
         this.setState({
             muted: !this.state.muted
         });
-        //TODO: mute toggle
     }
 
     render() {
         return (
             <div
                 style={{
-                    position: 'absolute',
-                    top: 0, right: 0, bottom: 0, left: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: '100vh',
                 }}>
                 <GameHeader
                     id={this.state.localId}
                     hosting={this.state.hosting}
                     onClick={(this.state.hosting ? this.endRoom : this.endCall)}
                 />
-                <div id="body" className='bg-light page' style={{
-                    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
-                    marginTop: '89px',
-                }}>
-                    <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%' }}>
+                <div id='body' className='bg-light page'
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        flex: 1,
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                    }}>
+                    <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
                         <ChatBox
                             // TODO: When peerlist update, send message to chat
-                            onClick={this.sendMessage}
+                            id={this.state.localId}
+                            onClick={this.verifyComment}
                             messages={this.state.messages}
                         />
                     </div>
-                    <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
-                        <div id='top' style={{ display: 'flex', height: '75vh', flexBasis: '80%', maxWidth: '100%', }}>
+                    <div id='right' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
+                        <div id='top' style={{ display: 'flex', height: '100%', flexBasis: '80%', maxWidth: '100%', }}>
                             <Streams
                                 localId={this.state.localId}
                                 localName={this.state.localName}
@@ -1030,9 +1107,9 @@ class Room extends React.Component {
                                 myPeers={this.myPeers}
                             />
                         </div>
-                        <div id="bottom" style={{
+                        <div id='bottom' style={{
                             display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
-                            flexBasis: '20%', width: '100%', height: '100%'
+                            flexBasis: '20%', width: '100%', height: '100%',
                         }}>
                             <CallOptions
                                 hosting={this.state.hosting}
@@ -1043,11 +1120,23 @@ class Room extends React.Component {
                                 camOn={this.state.camOn}
                                 toggleCam={this.toggleCam}
                             />
+                            <Card>
+                                <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
+                                    <div>
+                                        My Score: {this.state.myScore}
+                                    </div>
+                                    <div>
+                                        Opponent's Score: {this.state.otherScore}
+                                    </div>
+                                </Card.Body>
+                            </Card>
                             <GameOptions
                                 // TODO: add word somewhere in layout
                                 paintOn={this.state.paintOn}
-                                newWord={this.newWord}
+                                currentWord={this.state.currentWord}
+                                myTurn={this.state.myTurn}
                                 toggleDraw={this.toggleDraw}
+                                newWord={this.newWord}
                             />
 
                         </div>
