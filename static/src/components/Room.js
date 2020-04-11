@@ -106,7 +106,7 @@ class GameHeader extends React.Component {
                 width: '100%',
             }}>
                 {/* Title */}
-                <text onClick={this.props.onClick}><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
+                <text /*onClick={this.props.onClick}*/><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
                 {/* Room Code */}
                 {
                     this.props.hosting ?
@@ -132,7 +132,7 @@ class GameHeader extends React.Component {
                                 overlay={
                                     <Tooltip>
                                         Copy to Clipboard.
-                    </Tooltip>
+                                    </Tooltip>
                                 }
                             >
                                 <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
@@ -605,7 +605,7 @@ class Room extends React.Component {
 
                             // Handle when a remote peer ends the call
                             this.mediaConnection.on('close', () => {
-                                this.endCall();
+                                // this.endCall();
                             });
 
                             // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
@@ -655,13 +655,12 @@ class Room extends React.Component {
                                 this.peer_stream = peer_stream;
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
 
-                                // Handle when the call finishes
-                                this.mediaConnection.on('close', () => {
-                                    this.endCall();
-                                });
-
                             });
 
+                            // Handle when a remote peer ends the call
+                            this.mediaConnection.on('close', () => {
+                                // this.endCall();
+                            });
                         });
                     }
                 }
