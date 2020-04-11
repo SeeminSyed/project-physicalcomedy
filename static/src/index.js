@@ -13,6 +13,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Home from './pages/Home';
 
+
 // https://codeburst.io/getting-started-with-react-router-5c978f70df91
 const routing = (
     <Router>
@@ -24,6 +25,7 @@ const routing = (
                 <Route exact path="/charades" component={Charades} />
                 <Route exact path="/pictionary" component={Pictionary} />
                 <Route exact path="/room" component={Room} />
+
                 <Route component={NotFound} />
             </Switch>
         </div>
