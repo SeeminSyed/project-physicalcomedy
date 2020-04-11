@@ -81,7 +81,7 @@ function HelpModal() {
 class GameHeader extends React.Component {
     constructor() {
         super();
-        this.state = {copyText: "Copy to Clipboard."}
+        this.state = { copyText: "Copy to Clipboard." }
     }
 
     ctrlC(e) {
@@ -90,7 +90,7 @@ class GameHeader extends React.Component {
         // copy room code to clipboard
         this.textArea.select();
         document.execCommand('copy');
-        this.setState({ copyText: "Copied!"})
+        this.setState({ copyText: "Copied!" })
         // e.target.focus();
     }
 
@@ -412,8 +412,14 @@ class GameOptions extends React.Component {
                         overlay={<Tooltip>Get Another Word</Tooltip>}>
                         <Button variant='outline-info' id='wordbutton' onClick={this.props.newWord} size='lg' ><MdRefresh /></Button>
                     </OverlayTrigger>
-                    <div></div>
-                </div>
+                    <Card>
+                        <Card.Body style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
+                            <div>
+                                {this.props.currentWord}
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </div >
             );
         } else {
             return (
@@ -507,8 +513,11 @@ class Room extends React.Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.toggleMute = this.toggleMute.bind(this);
         this.toggleCam = this.toggleCam.bind(this);
-        this.newWord = this.newWord.bind(this);
         this.toggleDraw = this.toggleDraw.bind(this);
+        this.newWord = this.newWord.bind(this);
+        this.sendWordsCriteria = this.sendWordsCriteria.bind(this);
+        this.getWordsArray = this.getWordsArray.bind(this);
+
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
@@ -563,6 +572,7 @@ class Room extends React.Component {
                         this.toggleCam();
                     }
                     // wait for connections, data and media
+                    this.getWordsArray();
 
                     // Handle the on receive data event
                     this.peer.on('connection', (dataConnection) => {
@@ -595,8 +605,8 @@ class Room extends React.Component {
                                 });
                             });
                             // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
-                            // on connection, send list of messages to user
-                            // this.dataConnection.send('Hello!');
+                            // on connection, send wordlist to other user
+                            this.sendWordsCriteria();
                             if (this.state.myTurn) this.adminMessage("host, it's your turn.");
                         });
                         // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
@@ -668,6 +678,16 @@ class Room extends React.Component {
                                                     otherScore: temp.text,
                                                     myTurn: false,
                                                 });
+                                                break;
+                                            }
+                                            case 'words': {
+                                                // update score
+                                                this.setState({
+                                                    starterWord: temp.text.starterWord,
+                                                    category: temp.text.category,
+                                                    winningScore: temp.text.winningScore,
+                                                });
+                                                this.getWordsArray();
                                                 break;
                                             }
                                             default: {
@@ -1023,6 +1043,25 @@ class Room extends React.Component {
         }
     }
 
+    sendWordsCriteria() {
+        let temp = {
+            id: '', name: '', type: 'words',
+            text: {
+                starterWord: this.state.starterWord,
+                category: this.state.category,
+                winningScore: this.state.winningScore,
+            }
+        };
+
+        if (this.dataConnection) {
+            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+            this.dataConnection.send([temp]);
+            this.backlogMessages = [];
+        } else {
+            this.backlogMessages.push(temp);
+        }
+    }
+
     sendMessage(message) {
         // push new message to my messagelist then send to others
         // TODO: add to messagelist and send to all other users
@@ -1065,25 +1104,32 @@ class Room extends React.Component {
     getWordsArray() {
         // /words/:type/:word
         fetch(`/words/${this.state.category}/${this.state.starterWord}`)
-            .then((res) => {console.log(res); res.json();})
-            .then((wordsResponse) => this.setState({ wordsArray: wordsResponse }));
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                let newWord = data.pop();
+                this.setState({
+                    wordsArray: data,
+                    currentWord: newWord
+                })
+            });
     }
 
     newWord() {
         // onClick function for word
         let words = this.state.wordsArray;
-        console.log(words);
+        console.log('words', words);
         let newWord;
-        if(words !== null && words.length !== 0){
+        if (words && words.length !== 0) {
             newWord = words.pop();
-            
             this.setState({
                 currentWord: newWord
             });
         } else {
             this.getWordsArray();
         }
-        console.log(newWord);
+        console.log('newWord', newWord);
     }
 
     toggleMute() {
@@ -1157,11 +1203,10 @@ class Room extends React.Component {
                                 </Card.Body>
                             </Card>
                             <GameOptions
-                                // TODO: add word somewhere in layout
                                 paintOn={this.state.paintOn}
+                                toggleDraw={this.toggleDraw}
                                 currentWord={this.state.currentWord}
                                 myTurn={this.state.myTurn}
-                                toggleDraw={this.toggleDraw}
                                 newWord={this.newWord}
                             />
 
