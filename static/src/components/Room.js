@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdCompareArrows } from 'react-icons/md';
+import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
 import * as handTrack from 'handtrackjs';
@@ -409,8 +409,8 @@ class GameOptions extends React.Component {
                     <OverlayTrigger
                         placement='top'
                         delay={{ show: 250, hide: 400 }}
-                        overlay={<Tooltip>Give up?</Tooltip>}>
-                        <Button variant='outline-info' id='wordbutton' /*onClick={this.props.passTurn}*/ size='lg' ><MdCompareArrows /></Button>
+                        overlay={<Tooltip>Get Another Word</Tooltip>}>
+                        <Button variant='outline-info' id='wordbutton' onClick={this.props.newWord} size='lg' ><MdRefresh /></Button>
                     </OverlayTrigger>
                     <Card>
                         <Card.Body style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
@@ -423,7 +423,14 @@ class GameOptions extends React.Component {
             );
         } else {
             return (
-                <div></div>
+                <div>
+                    <OverlayTrigger
+                        placement='top'
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={<Tooltip>Give up?</Tooltip>}>
+                        <Button variant='outline-info' id='wordbutton' onClick={this.props.skipGuess} size='lg' ><MdCompareArrows /></Button>
+                    </OverlayTrigger>
+                </div>
             );
         }
     }
@@ -1037,7 +1044,7 @@ class Room extends React.Component {
             myTurn: true,
         });
         this.myScore = this.myScore++;
-            console.log("myScore after", this.myScore.toString());
+        console.log("myScore after", this.myScore.toString());
         let temp = { id: '', name: '', type: 'meta', text: this.myScore.toString() };
         if (this.dataConnection) {
             if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
