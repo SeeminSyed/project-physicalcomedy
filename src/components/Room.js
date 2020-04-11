@@ -494,6 +494,13 @@ class Room extends React.Component {
 
         // Function binding
         this.adminMessage = this.adminMessage.bind(this);
+        this.endRoom = this.endRoom.bind(this);
+        this.endCall = this.endCall.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.toggleMute = this.toggleMute.bind(this);
+        this.toggleCam = this.toggleCam.bind(this);
+        this.newWord = this.newWord.bind(this);
+        this.toggleDraw = this.toggleDraw.bind(this);
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
@@ -788,7 +795,7 @@ class Room extends React.Component {
                 }
 
                 // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-                return new Promise(function (resolve, reject) {
+                return new Promise((resolve, reject) => {
                     getUserMedia.call(navigator, constraints, resolve, reject);
                 });
             }
@@ -883,7 +890,7 @@ class Room extends React.Component {
                 }
             });
             // if (this.state.paintOn && this.canvasStream) {
-            //     window.requestAnimationFrame(function () {
+            //     window.requestAnimationFrame( () => {
             //         this.runDetection();
             //     });
             // }
@@ -1011,7 +1018,7 @@ class Room extends React.Component {
                     <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%' }}>
                         <ChatBox
                             // TODO: When peerlist update, send message to chat
-                            onClick={this.sendMessage.bind(this)}
+                            onClick={this.sendMessage}
                             messages={this.state.messages}
                         />
                     </div>
@@ -1030,18 +1037,18 @@ class Room extends React.Component {
                         }}>
                             <CallOptions
                                 hosting={this.state.hosting}
-                                endRoom={this.endRoom.bind(this)}
-                                endCall={this.endCall.bind(this)}
+                                endRoom={this.endRoom}
+                                endCall={this.endCall}
                                 muted={this.state.muted}
-                                toggleMute={this.toggleMute.bind(this)}
+                                toggleMute={this.toggleMute}
                                 camOn={this.state.camOn}
-                                toggleCam={this.toggleCam.bind(this)}
+                                toggleCam={this.toggleCam}
                             />
                             <GameOptions
                                 // TODO: add word somewhere in layout
                                 paintOn={this.state.paintOn}
-                                newWord={this.newWord.bind(this)}
-                                toggleDraw={this.toggleDraw.bind(this)}
+                                newWord={this.newWord}
+                                toggleDraw={this.toggleDraw}
                             />
 
                         </div>
