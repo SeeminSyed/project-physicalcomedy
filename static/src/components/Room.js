@@ -63,8 +63,8 @@ function HelpModal() {
                         <strong>Getting a New Word:</strong> To get a new word, click on the refresh icon <MdRefresh />. A new word
             will be displayed.
             <p></p>
-                        <strong>Making a Guess:</strong> To guess a word, type '\guess:[your guess]' into the text chat. If your guess
-            is correct you will receive a point. Example: '\guess: trunk' can something you type into your
+                        <strong>Making a Guess:</strong> To guess a word, type '\guess [your guess]' into the text chat. If your guess
+            is correct you will receive a point. Example: '\guess trunk' can something you type into your
             text chat, where 'trunk' is your guess.
             </p>
                 </Modal.Body>
@@ -469,7 +469,7 @@ class Room extends React.Component {
                     id: '',
                     name: '',
                     type: 'admin',
-                    text: 'Write your guess by typing \guess: and the word you guess or just send messages to your mates!',
+                    text: 'Write your guess by typing \\guess and the word you guess or just send messages to your mates!',
                 }
             ],
 
@@ -477,7 +477,7 @@ class Room extends React.Component {
             myTurn: true,
             currentWord: '',
             myScore: 0,
-            otherScore: null,
+            otherScore: '0',
 
         };
 
@@ -566,13 +566,13 @@ class Room extends React.Component {
                         category: this.props.location.state.data.category,
                         winningScore: parseInt(this.props.location.state.data.score),
                     });
+                    this.getWordsArray();
 
                     // ask for camera
                     if (!this.state.camOn) {
                         this.toggleCam();
                     }
                     // wait for connections, data and media
-                    this.getWordsArray();
 
                     // Handle the on receive data event
                     this.peer.on('connection', (dataConnection) => {
@@ -584,6 +584,7 @@ class Room extends React.Component {
                                 // data.map((temp) => console.log('Received', temp));
                                 // TODO: when message received, add to personal message list
                                 data.map((temp) => {
+                                    console.log("sending getting message", temp);
                                     switch (temp.type) {
                                         case 'meta': {
                                             // update score
@@ -1007,18 +1008,18 @@ class Room extends React.Component {
     }
 
     verifyComment(message) {
-        // if message.includes('\guess:'), correct and my turn
-        if (message.includes('\\guess:') && message.includes(this.state.currentWord) && this.state.myTurn) {
+        // if message.includes('\guess'), correct and my turn
+        if (message.includes('\\guess') && message.includes(this.state.currentWord) && !this.state.myTurn) {
             // sendMessage
             this.sendMessage(message);
             // adminMessage
-            this.adminMessage("You're right, ", (this.state.hosting ? 'host' : 'peer'), "! It's your turn now~");
+            this.adminMessage("You're right, " + (this.state.hosting ? 'host' : 'peer') + "! It's your turn now~");
             // updateScore
             this.updateScore();
             // if my score >= winningScore
             if (this.state.myScore >= this.state.winningScore) {
                 // (this.state.hosting ? 'host' : 'peer') won! But you can keep playing~
-                this.adminMessage((this.state.hosting ? 'host' : 'peer'), ' won! But you can keep playing~');
+                this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
             }
         } else {
             this.sendMessage(message);
@@ -1032,8 +1033,8 @@ class Room extends React.Component {
             myTurn: true,
         });
 
-        let temp = { id: '', name: '', type: 'meta', text: this.state.myscore };
-
+        let temp = { id: '', name: '', type: 'meta', text: ms.toString() };
+        console.log("sending score", temp);
         if (this.dataConnection) {
             if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
             this.dataConnection.send([temp]);
@@ -1103,6 +1104,7 @@ class Room extends React.Component {
 
     getWordsArray() {
         // /words/:type/:word
+        console.log('/words/${this.state.category}/${this.state.starterWord}', `/words/${this.state.category}/${this.state.starterWord}`);
         fetch(`/words/${this.state.category}/${this.state.starterWord}`)
             .then((response) => {
                 return response.json();
