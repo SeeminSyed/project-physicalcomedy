@@ -2,7 +2,7 @@ import React from 'react';
 import '../custom.css'
 
 const footer = {
-    position: 'fixed',
+    // position: 'fixed',
     left: '0',
     bottom: '0',
     width: '100%',
@@ -12,6 +12,10 @@ const footer = {
     padding: '5px',
     // flex: '0 0 50px',/*or just height:50px;*/
     // marginTop: 'auto'
+    // position: 'absolute',
+    // bottom: 0,
+    // width: '100%',
+    // height: '2.5rem',
 };
 
 const text = {

@@ -8,9 +8,23 @@ import '../custom.css'
 export default class Credits extends React.Component {
     render() {
         return (
-            <div className="App">
+            <div className="App"
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: '100vh',
+                }} >
                 <Header />
-                <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', marginLeft: '10%', marginRight: '10%', marginBottom: '30px',}}>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: '10%',
+                        marginRight: '10%',
+                        marginBottom: '30px',
+                        flex: 1,
+                    }}>
                     <Col>
                         <h3>Credits</h3>
                         <p style={{ margin: "20px", fontSize: "20px", }}>
