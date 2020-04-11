@@ -130,7 +130,7 @@ class GameHeader extends React.Component {
                                 value={this.props.id}
                                 onClick={this.ctrlC.bind(this)}
                             />
-                            <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
+                            <text id="roomId" style={{ fontSize: '80%', alignItems:'center' }} >Room Code: {this.props.id} </text>
                             <OverlayTrigger
                                 delay={{ show: 250, hide: 400 }}
                                 placement='bottom'
@@ -442,6 +442,8 @@ class Room extends React.Component {
             hosting: null,
             starterWord: '',
             category: '',
+            wordsArray: [], // empty words array
+            currWord: '', // current word on the user's screen
             winningScore: 0,
             hostId: '',
             // handtrackjs
@@ -991,8 +993,27 @@ class Room extends React.Component {
         }
     }
 
+    getWordsArray() {
+        // /words/:type/:word
+        fetch(`/words/${this.state.category}/${this.state.starterWord}`)
+            .then((res) => {console.log(res); res.json();})
+            .then((wordsResponse) => this.setState({ wordsArray: wordsResponse }));
+    }
+
     newWord() {
-        //TODO: datamuse API
+        // onClick function for word
+        let words = this.state.wordsArray;
+        console.log(words);
+        let newWord;
+        if(words === null && words.length !== 0){
+            newWord = words.pop();
+            this.setState({
+                currWord: newWord
+            });
+        } else {
+            this.getWordsArray();
+        }
+        console.log(newWord);
     }
 
     toggleMute() {
@@ -1049,11 +1070,12 @@ class Room extends React.Component {
                                 toggleCam={this.toggleCam}
                             />
                             <GameOptions
-                                // TODO: add word somewhere in layout
                                 paintOn={this.state.paintOn}
                                 newWord={this.newWord}
                                 toggleDraw={this.toggleDraw}
-                            />
+                            >
+                                {/* <Words category={this.state.category} word={this.state.starterWord}/> */}
+                            </GameOptions>
 
                         </div>
                     </div>
