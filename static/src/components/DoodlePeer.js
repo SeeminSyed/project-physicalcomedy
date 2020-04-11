@@ -1,8 +1,8 @@
 import React from 'react';
 import Peer from 'peerjs';
 import * as handTrack from "handtrackjs";
-import Words from './Words';
-
+// import Words from './Words';
+import Button from 'react-bootstrap/Button';
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
@@ -13,37 +13,6 @@ import Words from './Words';
 // let ypos = 0;
 let nxpos = 0
 let nypos = 0;
-
-// css for this component
-const style = {
-    display: 'flex',
-    margin: '20px 20px',
-    flexDirection: 'column',
-    flexGrow: '1',
-    fontWeight: '300',
-    fontSize: '200%',
-};
-
-const input = {
-    margin: '10px 10px',
-    flexGrow: '1',
-    padding: '10px 10px 10px 10px',
-    height: '15px',
-    alignSelf: 'center',
-    borderRadius: '10px',
-}
-
-const button = {
-    background: '#ffffff',
-    border: '2px #0e2b4d solid',
-    alignSelf: 'center',
-    fontSize: '50%',
-    borderRadius: '10px',
-    textAlign: 'center',
-    color: '#1d7786',
-    fontFamily: `'Poppins', sans-serif`,
-    padding: '10px 10px',
-}
 
 class DoodlePeer extends React.Component {
     constructor() {
@@ -60,6 +29,7 @@ class DoodlePeer extends React.Component {
             model: null,
             modelLoaded: false,
             doodler: false,
+            localCam: false,
             // showHighlight: false,
             // highlightText: "Attention needed",
             doodlecolor: "#1780DC",
@@ -67,6 +37,10 @@ class DoodlePeer extends React.Component {
             savedlines: []
         };
         // this.connect = this.connect.bind(this);
+        this.onEndStream = this.onEndStream.bind(this);
+        this.camOpen = this.camOpen.bind(this);
+        this.camClose = this.camClose.bind(this);
+
         this.onReceiveStream = this.onReceiveStream.bind(this);
         this.requestLocalVideo = this.requestLocalVideo.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -91,12 +65,12 @@ class DoodlePeer extends React.Component {
     }
 
 
-    componentWillUnmount() {
-        console.log("Page unmounting disposing model")
-        this.state.model.dispose();
-        this.peer.disconnect();
-        this.peer.destroy();
-    }
+    // componentWillUnmount() { TODO!!!
+    //     console.log("Page unmounting disposing model")
+    //     this.state.model.dispose();
+    //     this.peer.disconnect();
+    //     this.peer.destroy();
+    // }
 
     // on component mounting, set connections and events
     componentDidMount() {
@@ -124,7 +98,7 @@ class DoodlePeer extends React.Component {
         this.setState({ modelLoaded: true })
 
         // Initialize application by requesting your own video to test !
-        this.requestLocalVideo();
+        // this.requestLocalVideo();
 
         // Show the ID that allows other user to connect to your session.
         this.peer.on('open', (id) => {
@@ -141,7 +115,9 @@ class DoodlePeer extends React.Component {
 
         // Handle the on receive call event
         this.peer.on('call', (call) => {
-            // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
+            this.camOpen();
+            this.call = call;
+            // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?"); TODO!!!!!
             let acceptsCall = true;
 
             if (acceptsCall) {
@@ -163,6 +139,7 @@ class DoodlePeer extends React.Component {
                     alert("The videocall has finished");
                     let video = document.getElementById('peer-camera');
                     video.style.display = 'none';
+                    this.endCall();
                 });
 
                 // use call.close() to finish a call
@@ -397,6 +374,60 @@ class DoodlePeer extends React.Component {
         });
     }
 
+    // on button click, start/stop local cam stream
+    camButtonClick(e) {
+        if (this.state.localCam) {
+            this.setState({ localCam: false });
+            this.camClose();
+        } else {
+            this.setState({ localCam: true });
+            this.camOpen();
+        }
+    }
+
+    camOpen() {
+        // Initialize application by requesting your own video to test !
+        this.requestLocalVideo({
+            success: (stream) => {
+                this.localStream = stream;
+                this.onReceiveStream(stream, 'my-camera');
+            },
+            error: (err) => {
+                alert("Cannot get access to your camera and video !");
+                console.error(err);
+            }
+        });
+    }
+
+    onEndStream(element_id) {
+        // Retrieve the video element according to the desired
+        let video = document.getElementById(element_id);
+        // Set the given stream as the video source
+        // video.src = window.URL.createObjectURL(stream);
+        video.srcObject = null;
+
+        // Store a global reference of the stream
+        this.peer_stream = null;
+
+    }
+
+    camClose() {
+        this.onEndStream('my-camera');
+        this.localStream.getTracks().forEach((track) => {
+            track.stop();
+        });
+        console.log('this.localStream', this.localStream);
+    }
+
+    endCall() {
+        this.onEndStream('peer-camera');
+        if (this.call) {
+            this.call.close();
+        }// this.peer_stream.getTracks().forEach((track) => {
+        //     track.stop();
+        // });
+    }
+
     // show the incoming video stream
     handleChange(event) {
         this.setState({ value: event.target.value });
@@ -405,23 +436,28 @@ class DoodlePeer extends React.Component {
     render() {
         // render the stream here
         // console.log(this.peer.id);
-        return (<div>
-            <div className="peer-id" id="peer-id-form" style={style}>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Enter Peer ID:
-                            <input style={input} type="text" value={this.state.value} onChange={this.handleChange} required />
-                    </label>
-                    <button style={button} type="submit">Submit</button>
-                </form>
-            </div>
-            <div className="peer" style={style}>Peer id: {this.state.id} </div>
-            <Words></Words>
-            <button id="videobutton" style={button} onClick={this.videoButtonClick.bind(this)} >  {this.state.doodler ? "▩ Stop Video Doodle" : " ▶ ️ Start Video Doodle"} </button>
-            <video id="my-camera" /*style={vid}*/ width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
-            <canvas /*ref={this.feed}*/ id="feed"></canvas>
-            <video id="peer-camera" width="300" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
-        </div >);
+        return (
+            <div>
+                <div className="peer-id" id="peer-id-form">
+                    <form onSubmit={this.handleSubmit}>
+                        <label>
+                            Enter Peer ID:
+                            <input type="text" value={this.state.value} onChange={this.handleChange} required />
+                        </label>
+                        <Button variant="dark" type="submit">Submit</Button>
+                    </form>
+                </div>
+                <div className="peer">Peer id: {this.state.id} </div>
+                <Button variant="dark" onClick={this.camButtonClick.bind(this)} >{this.state.localCam ? "▩ Turn Camera Off" : " ▶ ️ Turn Camera On"}</Button>
+                <Button variant="dark" id="videobutton" onClick={this.videoButtonClick.bind(this)} >  {this.state.doodler ? "▩ Stop Video Doodle" : " ▶ ️ Start Video Doodle"} </Button>
+                <Button variant="dark" onClick={this.endCall.bind(this)} >End Call</Button>
+                {/* <Words></Words> */}
+                <div style={{ width: '50%', height: 'auto' }}>
+                    <video id="my-camera" /*style={vid}*/ width="50%" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
+                    <canvas /*ref={this.feed}*/ id="feed"></canvas>
+                    <video id="peer-camera" width="50%" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
+                </div>
+            </div >);
     }
     //     render() {
     //         return <h1>Receive</h1>

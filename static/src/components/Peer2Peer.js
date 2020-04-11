@@ -1,6 +1,7 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Peer from 'peerjs';
-import Words from './Words';
+// import Words from './Words';
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 
 // css for this component
@@ -39,20 +40,56 @@ const video = {
     width: 'auto',
 }
 
-class Create extends React.Component {
+
+function PeerVideo(props) {
+    return (
+        <video style={video} id={props.value} width="100" height="100" autoPlay="autoplay" className="mx-auto d-block" onClick={props.onClick}></video>
+    );
+}
+
+class Peer2Peer extends React.Component {
     constructor() {
         super();
-        this.state = { id: '', value: '' };
+        this.state = {
+            id: '',
+            value: '',
+            peerVideos: []
+        };
         this.onReceiveStream = this.onReceiveStream.bind(this);
         this.requestLocalVideo = this.requestLocalVideo.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.peer_stream = null;
         this.localStream = null;
+        this.peers = {};
 
         // reciever is the id that other peers will use to connect to this peer
         this.peer = new Peer();
         console.log("peer", this.peer);
+    }
+
+    renderPeerVideo(i) {
+        return (
+            <PeerVideo
+                value={i}
+                onClick={() => this.handleCanvasClick(i)}
+            />
+        );
+    }
+
+    addVideoToPeers(name) {
+        if (!(document.getElementById(name))) {
+            let a = this.state.peerVideos;
+            a.push(name);
+            this.setState({
+                peerVideos: a
+            });
+
+        }
+    }
+
+    handleCanvasClick(i) {
+
     }
 
     // Starts the request of the camera and microphone
@@ -72,8 +109,8 @@ class Create extends React.Component {
         // video.src = window.URL.createObjectURL(stream);
         video.srcObject = stream;
 
-        // Store a global reference of the stream
-        this.peer_stream = stream;
+        // // Store a global reference of the stream
+        // this.peer_stream = stream;
     }
 
     handleSubmit(event) {
@@ -86,9 +123,14 @@ class Create extends React.Component {
         let call = this.peer.call(this.state.value, this.localStream);
 
         call.on('stream', (stream) => {
-            this.peer_stream = stream;
+            // this.peer_stream = stream;
+            // ReactDOM.render(this.renderPeerVideo(this.state.value), document.getElementById('peers'));
+            // this.onReceiveStream(stream, this.state.value);
 
-            this.onReceiveStream(stream, 'peer-camera');
+            this.peers[this.state.value] = stream;
+            // Display the stream of the other user in the peer-camera video element !
+            this.addVideoToPeers(this.state.value);
+            this.onReceiveStream(stream, this.state.value);
         });
         // }, false);
 
@@ -124,6 +166,11 @@ class Create extends React.Component {
             success: (stream) => {
                 this.localStream = stream;
                 this.onReceiveStream(stream, 'my-camera');
+
+                // this.peers[this.state.id] = stream;
+                // // Display the stream of the other user in the peer-camera video element !
+                // this.addVideoToPeers(this.state.value);
+                // this.onReceiveStream(stream, this.state.value);
             },
             error: (err) => {
                 // alert("Cannot get access to camera and video!");
@@ -162,13 +209,15 @@ class Create extends React.Component {
             if (acceptsCall) {
                 // Answer the call with your own video/audio stream
                 call.answer(this.localStream);
-
                 // Receive data
                 call.on('stream', (stream) => {
                     // Store a global reference of the other user stream
-                    this.peer_stream = stream;
+                    // this.peer_stream = stream;
+                    this.peers[call.peer] = stream;
                     // Display the stream of the other user in the peer-camera video element !
-                    this.onReceiveStream(stream, 'peer-camera');
+                    // ReactDOM.render(this.renderPeerVideo(call.peer), document.getElementById('peers'));
+                    this.addVideoToPeers(call.peer);
+                    this.onReceiveStream(stream, call.peer);
                 });
 
                 // Handle when the call finishes
@@ -202,11 +251,17 @@ class Create extends React.Component {
                 </form>
             </div>
             <div className="peer" style={style}>Peer id: {this.state.id} </div>
-            <Words></Words>
-            <video style={video} id="my-camera" height="300" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
-            <video style={video} id="peer-camera" width="300" height="300" autoPlay="autoplay" className="mx-auto d-block"></video>
+            {/* <Words></Words> */}
+            <video style={video} id="my-camera" width="100%" autoPlay="autoplay" muted={true} className="mx-auto d-block"></video>
+            <div id="peers">
+                {this.state.peerVideos.map((name) => (
+                    <div key={name}>
+                        {this.renderPeerVideo(name)}
+                    </div>
+                ))}
+            </div>
 
         </div>);
     }
 }
-export default Create;
+export default Peer2Peer;
