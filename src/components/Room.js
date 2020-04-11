@@ -7,15 +7,14 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import { MdContentCopy, MdClear, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
+import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
-import { Redirect } from 'react-router';
-import Alert from 'react-bootstrap/Alert';
 
 class GameHeader extends React.Component {
 
     ctrlC(e) {
+        e.preventDefault();
         // https://stackoverflow.com/questions/56704138/i-want-to-create-a-copy-to-clipboard-using-react-js
         // copy room code to clipboard
         this.textArea.select();
@@ -43,34 +42,36 @@ class GameHeader extends React.Component {
                 {/* Title */}
                 <text><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
                 {/* Room Code */}
-                <div>
-                    <textarea
-                        readOnly={true}
-                        spellCheck='false'
-                        style={{
-                            background: '#17a2b8',
-                            color: '#17a2b8',
-                            fontSize: '1px',
-                            border: 'none',
-                            resize: 'none',
-                        }}
-                        ref={(textarea) => this.textArea = textarea}
-                        value={this.props.id}
-                        onClick={this.ctrlC.bind(this)}
-                    />
-                    <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
-                    <OverlayTrigger
-                        delay={{ show: 250, hide: 400 }}
-                        placement='bottom'
-                        overlay={
-                            <Tooltip>
-                                Copy to Clipboard.
-                            </Tooltip>
-                        }
-                    >
-                        <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
-                    </OverlayTrigger>
-                </div>
+                {this.props.hosting ?
+                    <div>
+                        <textarea
+                            readOnly={true}
+                            spellCheck='false'
+                            style={{
+                                background: '#17a2b8',
+                                color: '#17a2b8',
+                                fontSize: '1px',
+                                border: 'none',
+                                resize: 'none',
+                            }}
+                            ref={(textarea) => this.textArea = textarea}
+                            value={this.props.id}
+                            onClick={this.ctrlC.bind(this)}
+                        />
+                        <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
+                        <OverlayTrigger
+                            delay={{ show: 250, hide: 400 }}
+                            placement='bottom'
+                            overlay={
+                                <Tooltip>
+                                    Copy to Clipboard.
+                    </Tooltip>
+                            }
+                        >
+                            <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
+                        </OverlayTrigger>
+                    </div>
+                    : <div />}
                 {/* Help button */}
                 <OverlayTrigger
                     delay={{ show: 250, hide: 400 }}
@@ -268,9 +269,6 @@ class Streams extends React.Component {
 }
 
 class CallOptions extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
@@ -316,9 +314,18 @@ class CallOptions extends React.Component {
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
                     overlay={<Tooltip>End {this.props.hosting ? "Room" : "Call"}</Tooltip>}>
-                    <Button variant="danger" onClick={this.props.hosting ? this.props.endRoom : this.props.endCall} size="lg" >
-                        <MdCallEnd />
-                    </Button>
+                    {this.props.hosting ?
+                        // host
+                        <Button variant="danger" onClick={this.props.endRoom} size="lg" >
+                            <MdExitToApp />
+                        </Button>
+                        :
+                        // not host
+                        <Button variant="danger" onClick={this.props.endCall} size="lg" >
+                            <MdCallEnd />
+                        </Button>
+                    }
+
                 </OverlayTrigger>
             </div>
         );
@@ -326,9 +333,6 @@ class CallOptions extends React.Component {
 }
 
 class GameOptions extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
@@ -370,7 +374,7 @@ class Room extends React.Component {
             // peerjs
             localId: '',
             localName: '',
-            hosting: false,
+            hosting: null,
             starterWord: '',
             category: '',
             winningScore: 0,
@@ -400,9 +404,12 @@ class Room extends React.Component {
         this.mediaConnection = null;
         this.dataConnection = null;
         this.localStream = null;
-        this.canvasStream = null;
         // TODO: move this into the myPeers object 
+        this.canvasStream = null;
         this.peer_stream = null;
+
+        this.nxpos = 300 / 2;
+        this.nypos = 300 / 2;
 
         this.messages = [
             {
@@ -423,27 +430,11 @@ class Room extends React.Component {
             // },
         ];
 
-        // this.muted = true;
-        // this.camOn = false;
-        // this.paintOn = false;
-        this.nxpos = 300 / 2;
-        this.nypos = 300 / 2;
-
         // Function binding
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
         console.log("Current peer", this.peer.id);
-
-        // set up peer connection to the SERVER
-        this.peer.on('open', (localId) => {
-            console.log("peer id", localId);
-            this.setState({
-                localId: localId,
-                localName: localId,
-                hosting: false,
-            });
-        });
 
         // load handtrack model
         console.log("loading model...");
@@ -470,138 +461,172 @@ class Room extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.location.state) {
-            console.log("this.props.location.state", this.props.location.state);
-            if (this.props.location.state.hosting) {
-                this.setState({
-                    hosting: true,
-                    starterWord: this.props.location.state.data.word,
-                    category: this.props.location.state.data.category,
-                    winningScore: parseInt(this.props.location.state.data.score),
-                });
+        // set up peer connection to the SERVER
+        this.peer.on('open', (localId) => {
+            console.log("peer id", localId);
+            this.setState({
+                localId: localId,
+                localName: localId,
+            });
 
-                // ask for camera: if no, error warning
-                this.setState({
-                    camOn: false
-                });
-                this.toggleCam();
+            if (this.props.location.state) {
 
-                // wait for connections, data and media
-
-                // Handle the on receive data event
-                this.peer.on('connection', (dataConnection) => {
-                    this.dataConnection = dataConnection;
-                    // Emitted when the connection is established and ready-to-use. 
-                    this.dataConnection.on('open', () => {
-                        // Emitted when data is received from the remote peer.
-                        this.dataConnection.on('data', (data) => {
-                            console.log('Received', data);
-                        });
-                        // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
-                        // on connection, send list of messages to user
-                        this.dataConnection.send('Hello!');
+                console.log("this.props.location.state", this.props.location.state);
+                if (this.props.location.state.hosting) {
+                    this.setState({
+                        hosting: true,
+                        starterWord: this.props.location.state.data.word,
+                        category: this.props.location.state.data.category,
+                        winningScore: parseInt(this.props.location.state.data.score),
                     });
-                    // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
-                    // dataConnection.close();
-                });
 
-                // handle the on receive call event
-                this.peer.on('call', (mediaConnection) => {
-                    this.mediaConnection = mediaConnection;
-
-                    // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
-                    // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
-                    let acceptsCall = true;
-
-                    if (acceptsCall) {
-                        // Answer the call with your own video/audio stream
-                        let video = document.getElementById('peer-camera');
-                        video.style.display = 'inline-block';
-                        this.mediaConnection.answer(this.canvasStream);
-
-                        // Emitted when a remote peer adds a stream
-                        this.mediaConnection.on('stream', (peer_stream) => {
-                            // Store a global reference of the other user stream
-                            this.peer_stream = peer_stream;
-                            // Display the stream of the other user in the peer-camera video element
-                            this.onReceiveStream(this.peer_stream, 'peer-camera');
-                        });
-
-                        // Handle when a remote peer ends the call
-                        this.mediaConnection.on('close', () => {
-                            // TODO: on close, remove from peer list
-                            alert("The videocall has finished");
-                            let video = document.getElementById('peer-camera');
-                            video.style.display = 'none';
-                            this.peer_stream = null;
-                            this.endCall();
-                        });
-
-                        // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
-                        // this.mediaConnection.close();
-                    } else {
-                        console.log("Call denied !");
+                    // ask for camera
+                    if (!this.state.camOn) {
+                        this.toggleCam();
                     }
-                });
+                    // wait for connections, data and media
 
+                    // Handle the on receive data event
+                    this.peer.on('connection', (dataConnection) => {
+                        this.dataConnection = dataConnection;
+                        // Emitted when the connection is established and ready-to-use. 
+                        this.dataConnection.on('open', () => {
+                            // Emitted when data is received from the remote peer.
+                            this.dataConnection.on('data', (data) => {
+                                console.log('Received', data);
+                            });
+                            // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
+                            // on connection, send list of messages to user
+                            this.dataConnection.send('Hello!');
+                        });
+                        // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
+                        // dataConnection.close();
+                    });
+
+                    // handle the on receive call event
+                    this.peer.on('call', (mediaConnection) => {
+                        this.mediaConnection = mediaConnection;
+
+                        // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
+                        let acceptsCall = window.confirm("Videocall incoming, do you want to accept it ?");
+                        // let acceptsCall = true;
+
+                        if (acceptsCall) {
+                            // Answer the call with your own video/audio stream
+                            let video = document.getElementById('peer-camera');
+                            video.style.display = 'inline-block';
+                            this.mediaConnection.answer(this.canvasStream);
+
+                            // Emitted when a remote peer adds a stream
+                            this.mediaConnection.on('stream', (peer_stream) => {
+                                // Store a global reference of the other user stream
+                                this.peer_stream = peer_stream;
+                                // Display the stream of the other user in the peer-camera video element
+                                this.onReceiveStream(this.peer_stream, 'peer-camera');
+                            });
+
+                            // Handle when a remote peer ends the call
+                            this.mediaConnection.on('close', () => {
+                                this.endCall();
+                            });
+
+                            // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
+                            // this.mediaConnection.close();
+                        } else {
+                            console.log("Call denied !");
+                        }
+                    });
+
+                } else {
+                    this.setState({
+                        hosting: false,
+                        hostId: this.props.location.state.data.code,
+                    });
+
+                    // ask for camera
+                    if (!this.state.camOn) {
+                        this.toggleCam(() => {
+
+                            // console.log("callback from toggleCam");
+
+                            // make connection to host, data and media
+                            let video = document.getElementById('peer-camera');
+                            video.style.display = 'inline-block';
+                            console.log('Calling to ', this.state.hostId);
+
+                            // make connection to another peer
+                            this.dataConnection = this.peer.connect(this.state.hostId, "hi");
+                            this.dataConnection.on('open', () => {
+                                this.dataConnection.on('data', (data) => {
+                                    console.log('Received', data);
+                                });
+                                this.dataConnection.send('hi!');
+                            });
+
+                            // make call to another peer TODO: what if this.canvasStream is null?
+                            this.mediaConnection = this.peer.call(this.state.hostId, this.canvasStream);
+                            this.mediaConnection.on('stream', (peer_stream) => {
+                                this.peer_stream = peer_stream;
+                                this.onReceiveStream(this.peer_stream, 'peer-camera');
+
+                                // Handle when the call finishes
+                                this.mediaConnection.on('close', () => {
+                                    this.endCall();
+                                });
+
+                            });
+
+                        });
+                    }
+                }
             } else {
-                this.setState({
-                    hosting: false,
-                    hostId: this.props.location.state.data.code,
-                });
-
-                // ask for camera: if no, error warning
-                this.setState({
-                    camOn: false
-                });
-                this.toggleCam();
-
-                // make connection to host, data and media
-                let video = document.getElementById('peer-camera');
-                video.style.display = 'inline-block';
-                console.log('Calling to ' + this.state.value);
-
-                // make connection to another peer
-                this.dataConnection = this.peer.connect(this.state.value, "hi");
-                this.dataConnection.on('open', () => {
-                    this.dataConnection.on('data', (data) => {
-                        console.log('Received', data);
-                    });
-                    this.dataConnection.send('hi!');
-                });
-
-                // make call to another peer TODO: what if this.canvasStream is null?
-                this.mediaConnection = this.peer.call(this.state.value, this.canvasStream);
-                this.mediaConnection.on('stream', (peer_stream) => {
-                    this.peer_stream = peer_stream;
-                    this.onReceiveStream(this.peer_stream, 'peer-camera');
-
-                    // Handle when the call finishes
-                    this.mediaConnection.on('close', () => {
-                    });
-
-                });
+                // was not directed from home
+                console.log("redirect to homepage");
+                window.location.replace("../");
             }
-        } else {
-            // was not directed from home
-            console.log("redirect to homepage");
-            window.location.replace("../");
-        }
-
+        });
     }
 
     endRoom() {
-        //TODO
+        //TODO: let all peers know to leave
+        // end connections
+        if (this.dataConnection) {
+            this.dataConnection.close();
+        }
+        if (this.mediaConnection) {
+            this.mediaConnection.close();
+        }
+        // end peer
+        // TODO: on close, remove from peer list
+        this.onEndStream('peer-camera');
+        this.peer_stream = null;
+        // end local
+        if (this.state.camOn) {
+            this.toggleCam();
+        }
+        alert("The videocall has finished");
+        this.peer.destroy();
+        console.log("redirect to homepage");
+        window.location.replace("../");
     }
 
     endCall() {
-        //TODO
-        this.onEndStream('peer-camera');
+        // end connections
+        if (this.dataConnection) {
+            this.dataConnection.close();
+        }
         if (this.mediaConnection) {
             this.mediaConnection.close();
-        }// this.peer_stream.getTracks().forEach((track) => {
-        //     track.stop();
-        // });
+        }
+        // TODO: on close, remove from peer list
+        // end peer
+        // TODO: on close, remove all peer list
+        this.onEndStream('peer-camera');
+        this.peer_stream = null;
+        // end local
+        if (this.state.camOn) {
+            this.toggleCam();
+        }
         alert("The videocall has finished");
         this.peer.destroy();
         console.log("redirect to homepage");
@@ -623,7 +648,7 @@ class Room extends React.Component {
     }
 
     // feedback loop of getting cam stream from hidden video and applying to canvas on sceen
-    streamFeed() {
+    streamFeed(callbacks) {
         // TODO: Move these around to global variables after component mounts
         let feed = document.getElementById('feed');
         let context = feed.getContext('2d');
@@ -650,11 +675,12 @@ class Room extends React.Component {
                 this.streamFeed();
             }
         });
+        if (callbacks) callbacks();
         // context.drawImage(video, 0, 0);
     }
 
     // Starts the request of the camera and microphone
-    requestLocalVideo() {
+    requestLocalVideo(callbacks) {
         console.log('requesting video');
         // // Monkeypatch for crossbrowser geusermedia
         // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -693,7 +719,7 @@ class Room extends React.Component {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
             this.localStream = stream;
             this.onReceiveStream(stream, 'my-camera');
-            this.streamFeed();
+            this.streamFeed(() => callbacks());
         }).catch((err) => {
             alert("Cannot get access to your camera and video !");
             console.error(err);
@@ -707,9 +733,11 @@ class Room extends React.Component {
     onEndStream(element_id) {
         // Retrieve the video element according to the desired
         let video = document.getElementById(element_id);
+
         // Set the given stream as the video source
         // video.src = window.URL.createObjectURL(stream);
         video.srcObject = null;
+        video.style.display = 'none';
 
         // // Store a global reference of the stream
         // // TODO: abstract this to peers list
@@ -717,7 +745,7 @@ class Room extends React.Component {
 
     }
 
-    toggleCam() {
+    toggleCam(callbacks) {
         if (this.state.camOn) {
             // turning off
             // this.camOn = false;
@@ -737,7 +765,7 @@ class Room extends React.Component {
                 camOn: true
             });
 
-            this.requestLocalVideo();
+            this.requestLocalVideo(() => callbacks());
         }
     }
 
@@ -874,45 +902,45 @@ class Room extends React.Component {
         //TODO: mute toggle
     }
 
-    // when peer key submitted, call should start and associated event listeners should be set
-    handleSubmit(event) {
-        event.preventDefault();
-        // Request a videocall the other user
-        console.log('Calling to ' + this.state.value);
-        console.log(this.peer);
-        let video = document.getElementById('peer-camera');
-        video.style.display = 'inline-block';
+    // // when peer key submitted, call should start and associated event listeners should be set
+    // handleSubmit(event) {
+    //     event.preventDefault();
+    //     // Request a videocall the other user
+    //     console.log('Calling to ' + this.state.value);
+    //     console.log(this.peer);
+    //     let video = document.getElementById('peer-camera');
+    //     video.style.display = 'inline-block';
 
 
-        // make connection to another peer
-        let conn = this.peer.connect(this.state.value, "hi");
-        conn.on('open', () => {
-            conn.on('data', (data) => {
-                console.log('Received', data);
-            });
-            conn.send('hi!');
-        });
+    //     // make connection to another peer
+    //     let conn = this.peer.connect(this.state.value, "hi");
+    //     conn.on('open', () => {
+    //         conn.on('data', (data) => {
+    //             console.log('Received', data);
+    //         });
+    //         conn.send('hi!');
+    //     });
 
-        // // make call to another peer TODO: what if this.canvasStream is null?
-        // let call = this.peer.call(this.state.value, this.canvasStream);
-        // call.on('stream', (stream) => {
-        //     this.peer_stream = stream;
-        //     this.onReceiveStream(stream, 'peer-camera');
+    //     // // make call to another peer TODO: what if this.canvasStream is null?
+    //     // let call = this.peer.call(this.state.value, this.canvasStream);
+    //     // call.on('stream', (stream) => {
+    //     //     this.peer_stream = stream;
+    //     //     this.onReceiveStream(stream, 'peer-camera');
 
-        //     // Handle when the call finishes
-        //     call.on('close', () => {
-        //         alert("The videocall has finished");
-        //         let video = document.getElementById('peer-camera');
-        //         video.style.display = 'none';
-        //     });
+    //     //     // Handle when the call finishes
+    //     //     call.on('close', () => {
+    //     //         alert("The videocall has finished");
+    //     //         let video = document.getElementById('peer-camera');
+    //     //         video.style.display = 'none';
+    //     //     });
 
-        // });
-    }
+    //     // });
+    // }
 
-    // show the incoming video stream
-    handleChange2(event) {
-        this.setState({ value: event.target.value });
-    }
+    // // show the incoming video stream
+    // handleChange2(event) {
+    //     this.setState({ value: event.target.value });
+    // }
 
     // https://getbootstrap.com/docs/4.4/utilities/position/
     render() {
@@ -924,6 +952,7 @@ class Room extends React.Component {
                 }}>
                 <GameHeader
                     id={this.state.localId}
+                    hosting={this.state.hosting}
                 />
                 <div id="body" className='bg-light page' style={{
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
@@ -938,7 +967,7 @@ class Room extends React.Component {
                             onClick={this.sendMessage.bind(this)}
                             messages={this.messages}
                         />
-                        <div className="peer-id" id="peer-id-form">
+                        {/* <div className="peer-id" id="peer-id-form">
                             <form onSubmit={this.handleSubmit.bind(this)}>
                                 <label>
                                     Enter Peer ID:
@@ -946,7 +975,7 @@ class Room extends React.Component {
                                 </label>
                                 <button type="submit">Submit</button>
                             </form>
-                        </div>
+                        </div> */}
                     </div>
                     <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
                         <div id='top' style={{ display: 'flex', height: '75vh', flexBasis: '80%', maxWidth: '100%', }}>
@@ -963,7 +992,6 @@ class Room extends React.Component {
                         }}>
                             <CallOptions
                                 hosting={this.state.hosting}
-                                // TODO: add these
                                 endRoom={this.endRoom.bind(this)}
                                 endCall={this.endCall.bind(this)}
                                 muted={this.state.muted}
