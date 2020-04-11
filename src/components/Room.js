@@ -1,16 +1,90 @@
-import React from 'react';
-import * as handTrack from "handtrackjs";
-import Peer from 'peerjs';
+import React, { useState } from 'react';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
+<<<<<<< Updated upstream
 import Form from 'react-bootstrap/Form';
 import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
+=======
+import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
+import Footer from '../components/Footer';
+import Form from 'react-bootstrap/Form';
+import * as handTrack from "handtrackjs";
+import { MdContentCopy, MdClear, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
+import Modal from 'react-bootstrap/Modal';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Peer from 'peerjs';
+import { Redirect } from 'react-router';
+import Tooltip from 'react-bootstrap/Tooltip';
+import Words from './Words';
+>>>>>>> Stashed changes
 
+// https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
+// https://www.andismith.com/blogs/2012/07/extending-getusermedia/
+
+
+function HelpModal() {
+    const [show, setShow] = useState(false);
+    const handleShow = () => setShow(true);
+  
+    return (
+      <>
+        <Button variant="outline-light" onClick={handleShow}> Help? </Button>
+        <Modal
+            show={show}
+            onHide={() => setShow(false)}
+            dialogClassName="modal-100w"
+            onEscapeKeyDown={() => setShow(false)}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Instructions</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+              <p>
+            On the landing page, you are asked to input a word, category and score,
+            if you're making a new room.
+            <ul>
+                <li>
+                    Word and Category: Players are asked to act or doodle words related to
+                    the word and category that they entered.
+                    Example: If user entered "tree" as a word and chose "Nouns" as category,
+                    a possible word that a player can get is "trunk".
+                </li>
+                <li>
+                    Score: A value of at least 5. Player that first reaches this value wins.
+                </li>
+            </ul>
+            These options are available to the creator of the room. For someone joining an existing
+            room, they will need to enter a code.
+                <li>
+                    Code: A key that is provided to the creator of the room. When the key is shared
+                    with other players*, they are also able to join the room.
+                </li>
+            * For now, we only support two players. Future updates may include multiplayer.
+            <p></p>
+            <strong>Game Mode:</strong> By default, players are in Charades mode. To switch to Pictionary, click on
+            the paint icon <FaPaintBrush /> to doodle.
+            <p></p>
+            <strong>Getting a New Word:</strong> To get a new word, click on the refresh icon <MdRefresh />. A new word
+            will be displayed.
+            <p></p>
+            <strong>Making a Guess:</strong> To guess a word, type "\guess:[your guess]" into the text chat. If your guess
+            is correct you will receive a point. Example: "\guess: trunk" can something you type into your
+            text chat, where "trunk" is your guess.
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="outline-primary" onClick={() => setShow(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
+    );
+  }
 class GameHeader extends React.Component {
 
     ctrlC(e) {
@@ -73,17 +147,7 @@ class GameHeader extends React.Component {
                     </div>
                     : <div />}
                 {/* Help button */}
-                <OverlayTrigger
-                    delay={{ show: 250, hide: 400 }}
-                    placement='bottom'
-                    overlay={
-                        <Tooltip>
-                            Need Help?
-                        </Tooltip>
-                    }
-                >
-                    <Button variant="outline-light" onClick={this.props.onClick}> Help? </Button>
-                </OverlayTrigger>
+                <HelpModal/>
             </header>
         );
     }
@@ -269,6 +333,12 @@ class Streams extends React.Component {
 }
 
 class CallOptions extends React.Component {
+<<<<<<< Updated upstream
+=======
+    // constructor(props) {
+    //     super(props);
+    // }
+>>>>>>> Stashed changes
 
     render() {
         return (
@@ -333,6 +403,12 @@ class CallOptions extends React.Component {
 }
 
 class GameOptions extends React.Component {
+<<<<<<< Updated upstream
+=======
+    // constructor(props) {
+    //     super(props);
+    // }
+>>>>>>> Stashed changes
 
     render() {
         return (
@@ -382,7 +458,7 @@ class Room extends React.Component {
             // handtrackjs
             modelParams: {
                 flipHorizontal: true,   // flip e.g for video  
-                maxNumBoxes: 1,        // maximum number of boxes to detect
+                maxNumBoxes: 1,         // maximum number of boxes to detect
                 iouThreshold: 0.5,      // ioU threshold for non-max suppression
                 scoreThreshold: 0.9,    // confidence threshold for predictions.
             },

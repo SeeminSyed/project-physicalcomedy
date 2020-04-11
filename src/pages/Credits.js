@@ -27,7 +27,7 @@ export default class Credits extends React.Component {
                                         <li> <a rel="noopener noreferrer" target="_blank" href="https://stackoverflow.com/">Stack Overflow</a></li>
                                         <li> Many <a rel="noopener noreferrer" target="_blank" href="https://hackernoon.com"> Hackernoon</a> and <a rel="noopener noreferrer" target="_blank" href="http://medium.com/"> Medium </a> Articles</li>
                                         <li><a rel="noopener noreferrer" target="_blank" href="http://codepen.io/">Codepen.io </a></li>
-                                        <li><a rel="noopener noreferrer" target="_blank" href="https://heroku.com">Heroku</a></li>
+                                        <li><a rel="noopener noreferrer" target="_blank" href="https://heroku.com">Heroku</a> and <a rel="noopener noreferrer" target="_blank" href="https://daveceddia.com/deploy-react-express-app-heroku/"> Dave Ceddia's</a> article on deployment of React and Express Applications</li>
                                         <li>Gesture Detection, our npm packages</li>
                                         {/* <li></li> Peerjs Articles? */}
                                     </Col>

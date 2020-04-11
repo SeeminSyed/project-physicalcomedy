@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -7,7 +7,6 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Instructions from './Instructions';
 import { Redirect } from 'react-router';
-import ReactDOM from 'react-dom';
 
 let data = { word: '', category: 'Nouns', score: '', code: '' };
 
@@ -25,7 +24,7 @@ class CardOneForm extends React.Component {
 
         this.enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
         this.wordCategory = "You will get words based on the category you choose.";
-        this.score = "Player who reaches this score first wins!";
+        this.score = "Please enter a value greater than or equal to 5. Player who reaches this score first wins!";
     }
 
 
@@ -52,7 +51,6 @@ class CardOneForm extends React.Component {
                     data: data,
                 }
             }} />;
-            // console.log('data', data);
         }
     }
 
@@ -124,7 +122,6 @@ class CardOneForm extends React.Component {
             </Form>
         );
     }
-
 }
 
 class CardTwoForm extends React.Component {
