@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
+import { MdContentCopy, MdExitToApp, MdVideocam, MdVideocamOff, MdCallEnd, MdCompareArrows } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
 import * as handTrack from 'handtrackjs';
@@ -409,8 +409,8 @@ class GameOptions extends React.Component {
                     <OverlayTrigger
                         placement='top'
                         delay={{ show: 250, hide: 400 }}
-                        overlay={<Tooltip>Get Another Word</Tooltip>}>
-                        <Button variant='outline-info' id='wordbutton' onClick={this.props.newWord} size='lg' ><MdRefresh /></Button>
+                        overlay={<Tooltip>Give up?</Tooltip>}>
+                        <Button variant='outline-info' id='wordbutton' /*onClick={this.props.passTurn}*/ size='lg' ><MdCompareArrows /></Button>
                     </OverlayTrigger>
                     <Card>
                         <Card.Body style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
@@ -476,11 +476,11 @@ class Room extends React.Component {
             // Game
             myTurn: true,
             currentWord: '',
-            myScore: 0,
             otherScore: '0',
 
         };
 
+        this.myScore = 0;
         // Objects used by composite components
         this.mediaConnection = null;
         this.dataConnection = null;
@@ -687,6 +687,7 @@ class Room extends React.Component {
                                                     starterWord: temp.text.starterWord,
                                                     category: temp.text.category,
                                                     winningScore: temp.text.winningScore,
+                                                    currentWord: temp.text.currentWord,
                                                 });
                                                 this.getWordsArray();
                                                 break;
@@ -1017,7 +1018,8 @@ class Room extends React.Component {
             // updateScore
             this.updateScore();
             // if my score >= winningScore
-            if (this.state.myScore >= this.state.winningScore) {
+            console.log("myScore/winningScore", this.myScore.toString() + "/" + this.state.winningScore.toString());
+            if (this.myScore >= this.state.winningScore) {
                 // (this.state.hosting ? 'host' : 'peer') won! But you can keep playing~
                 this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
             }
@@ -1027,14 +1029,16 @@ class Room extends React.Component {
     }
 
     updateScore() {
-        let ms = this.state.myScore + 1;
+        console.log("myScore before", this.myScore.toString());
+        let ms = this.myScore;
+        ms++;
         this.setState({
-            myScore: ms,
+            myScore: this.myScore++,
             myTurn: true,
         });
-
-        let temp = { id: '', name: '', type: 'meta', text: ms.toString() };
-        console.log("sending score", temp);
+        this.myScore = this.myScore++;
+            console.log("myScore after", this.myScore.toString());
+        let temp = { id: '', name: '', type: 'meta', text: this.myScore.toString() };
         if (this.dataConnection) {
             if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
             this.dataConnection.send([temp]);
@@ -1051,6 +1055,7 @@ class Room extends React.Component {
                 starterWord: this.state.starterWord,
                 category: this.state.category,
                 winningScore: this.state.winningScore,
+                currentWord: this.state.currentWord,
             }
         };
 
@@ -1197,7 +1202,7 @@ class Room extends React.Component {
                             <Card>
                                 <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
                                     <div>
-                                        My Score: {this.state.myScore}
+                                        My Score: {this.myScore.toString()}
                                     </div>
                                     <div>
                                         Opponent's Score: {this.state.otherScore}
