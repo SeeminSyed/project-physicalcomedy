@@ -15,9 +15,6 @@ app.get('/', (req, res, next) => res.send('Hello world!'));
 function getCode(type) {
     let code = '';
     switch (type) {
-        case 'Noun':
-            code = 'rel_jja';
-            break;
         case 'Adjectives':
             code = 'rel_jjb';
             break;
@@ -32,6 +29,9 @@ function getCode(type) {
             break;
         case 'Homophones':
             code = 'rel_hom';
+            break;
+        default: // Nouns
+            code = 'rel_jja';
             break;
     }
     return code;
