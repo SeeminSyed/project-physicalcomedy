@@ -6,9 +6,9 @@ https://physicalcomedy.heroku.com
 ## Video Demo:
 // TODO
 
-## Team Members // TODO: Add github
-- Sakina Gadriwala 
-- Seemin Syed
+## Team Members
+- [Sakina Gadriwala](https://github.com/SakinaGadri)
+- [Seemin Syed](https://github.com/SeeminSyed)
 
 ## Description of The Web Application
 Physical Comedy is a web application that allows users to play full body charades and pictionary with people around the world, by 'drawing' on their stream by moving their hands in the air in front of their camera. As the player moves their hands in the air, they draw on their screen, allowing other players to guess what has been drawn, or written. It supports play with two players and the rules are the same as anytime else you've played the game: have fun!
