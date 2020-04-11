@@ -78,6 +78,10 @@ function HelpModal() {
 }
 
 class GameHeader extends React.Component {
+    constructor() {
+        super();
+        this.state = {copyText: "Copy to Clipboard."}
+    }
 
     ctrlC(e) {
         e.preventDefault();
@@ -85,6 +89,7 @@ class GameHeader extends React.Component {
         // copy room code to clipboard
         this.textArea.select();
         document.execCommand('copy');
+        this.setState({ copyText: "Copied!"})
         // e.target.focus();
     }
 
@@ -131,7 +136,7 @@ class GameHeader extends React.Component {
                                 placement='bottom'
                                 overlay={
                                     <Tooltip>
-                                        Copy to Clipboard.
+                                        {this.state.copyText}
                                     </Tooltip>
                                 }
                             >
