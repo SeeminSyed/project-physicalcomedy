@@ -76,6 +76,7 @@ function HelpModal() {
         </>
     );
 }
+
 class GameHeader extends React.Component {
 
     ctrlC(e) {
@@ -105,41 +106,43 @@ class GameHeader extends React.Component {
                 width: '100%',
             }}>
                 {/* Title */}
-                <text><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
+                <text onClick={this.props.onClick}><span role="img" aria-label="emoji">🎉</span> Physical Comedy </text>
                 {/* Room Code */}
-                {this.props.hosting ?
-                    <div>
-                        <textarea
-                            readOnly={true}
-                            spellCheck='false'
-                            style={{
-                                background: '#17a2b8',
-                                color: '#17a2b8',
-                                fontSize: '1px',
-                                border: 'none',
-                                resize: 'none',
-                            }}
-                            ref={(textarea) => this.textArea = textarea}
-                            value={this.props.id}
-                            onClick={this.ctrlC.bind(this)}
-                        />
-                        <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
-                        <OverlayTrigger
-                            delay={{ show: 250, hide: 400 }}
-                            placement='bottom'
-                            overlay={
-                                <Tooltip>
-                                    Copy to Clipboard.
+                {
+                    this.props.hosting ?
+                        <div>
+                            <textarea
+                                readOnly={true}
+                                spellCheck='false'
+                                style={{
+                                    background: '#17a2b8',
+                                    color: '#17a2b8',
+                                    fontSize: '1px',
+                                    border: 'none',
+                                    resize: 'none',
+                                }}
+                                ref={(textarea) => this.textArea = textarea}
+                                value={this.props.id}
+                                onClick={this.ctrlC.bind(this)}
+                            />
+                            <text id="roomId" style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
+                            <OverlayTrigger
+                                delay={{ show: 250, hide: 400 }}
+                                placement='bottom'
+                                overlay={
+                                    <Tooltip>
+                                        Copy to Clipboard.
                     </Tooltip>
-                            }
-                        >
-                            <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
-                        </OverlayTrigger>
-                    </div>
-                    : <div />}
+                                }
+                            >
+                                <Button variant="outline-light" style={{ fontSize: '50%', }} onClick={this.ctrlC.bind(this)}><MdContentCopy /></Button>
+                            </OverlayTrigger>
+                        </div>
+                        : <div />
+                }
                 {/* Help button */}
                 <HelpModal />
-            </header>
+            </header >
         );
     }
 }
@@ -199,19 +202,17 @@ class ChatBox extends React.Component {
                                 {
                                     this.props.messages.map(msg => {
                                         switch (msg.type) {
-                                            case "meta":
+                                            case "admin":
                                                 return (<li className='list-group list-group-flush' key={msg.name}>
                                                     <text style={{ color: '#808080' }}> >>> {msg.text} </text>
                                                 </li>)
-                                            case "local":
-                                                return (<li className='list-group list-group-flush' key={msg.name}>
-                                                    <text style={{ color: '#17b87e' }}> <strong>{msg.name}</strong>: {msg.text} </text>
-                                                </li>)
-                                            case "peer":
-                                                return (<li className='list-group list-group-flush' key={msg.name}>
-                                                    <text style={{ color: '#17a2b8' }}> <strong>{msg.name}</strong>: {msg.text} </text>
-                                                </li>)
                                             default:
+                                                console.log("msg.id/this.localId", msg.id, '/', this.localId);
+                                                if (msg.id === this.user) {
+                                                    return (<li className='list-group list-group-flush' key={msg.name}>
+                                                        <text style={{ color: '#17b87e' }}> <strong>{msg.name}</strong>: {msg.text} </text>
+                                                    </li>)
+                                                }
                                                 return (<li className='list-group list-group-flush' key={msg.name}>
                                                     <text style={{ color: '#17a2b8' }}> <strong>{msg.name}</strong>: {msg.text} </text>
                                                 </li>)
@@ -449,13 +450,21 @@ class Room extends React.Component {
             modelLoaded: false,
             doodlecolor: "#17a2b8",
             savedlines: [],
-            // button
+
+            // buttons
             camOn: false,
             muted: true,
             paintOn: false,
 
-            // value TODO: delete
-            value: '',
+            // lists
+            messages: [
+                {
+                    id: "",
+                    name: "",
+                    type: "admin",
+                    text: "Write your guess here or just send messages to your mates!",
+                }
+            ]
 
         };
 
@@ -470,13 +479,7 @@ class Room extends React.Component {
         this.nxpos = 300 / 2;
         this.nypos = 300 / 2;
 
-        this.messages = [
-            {
-                name: "",
-                type: "meta",
-                text: "Write your guess here or just send messages to your mates!",
-            }
-        ];
+        this.backlogMessages = [];
 
         this.myPeers = [
             // {
@@ -490,6 +493,7 @@ class Room extends React.Component {
         ];
 
         // Function binding
+        this.adminMessage = this.adminMessage.bind(this);
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
@@ -552,11 +556,19 @@ class Room extends React.Component {
                         this.dataConnection.on('open', () => {
                             // Emitted when data is received from the remote peer.
                             this.dataConnection.on('data', (data) => {
-                                console.log('Received', data);
+                                // data.map((temp) => console.log('Received', temp));
+                                // TODO: when message received, add to personal message list
+                                data.map((temp) => {
+                                    let tempMessages = this.state.messages;
+                                    tempMessages.push(temp);
+                                    this.setState({
+                                        messages: tempMessages,
+                                    })
+                                });
                             });
                             // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
                             // on connection, send list of messages to user
-                            this.dataConnection.send('Hello!');
+                            // this.dataConnection.send('Hello!');
                         });
                         // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
                         // dataConnection.close();
@@ -567,8 +579,8 @@ class Room extends React.Component {
                         this.mediaConnection = mediaConnection;
 
                         // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
-                        let acceptsCall = window.confirm("Videocall incoming, do you want to accept it ?");
-                        // let acceptsCall = true;
+                        let acceptsCall = true;
+                        acceptsCall = window.confirm("Videocall incoming, do you want to accept it ?");
 
                         if (acceptsCall) {
                             // Answer the call with your own video/audio stream
@@ -613,13 +625,21 @@ class Room extends React.Component {
                             video.style.display = 'inline-block';
                             console.log('Calling to ', this.state.hostId);
 
-                            // make connection to another peer
+                            // make connection to another peer TODO: add metadata
                             this.dataConnection = this.peer.connect(this.state.hostId, "hi");
                             this.dataConnection.on('open', () => {
                                 this.dataConnection.on('data', (data) => {
-                                    console.log('Received', data);
+                                    // data.map((temp) => console.log('Received', temp));
+                                    // TODO: when message received, add to personal message list
+                                    data.map((temp) => {
+                                        let tempMessages = this.state.messages;
+                                        tempMessages.push(temp);
+                                        this.setState({
+                                            messages: tempMessages,
+                                        })
+                                    });
                                 });
-                                this.dataConnection.send('hi!');
+                                // this.dataConnection.send('hi!');
                             });
 
                             // make call to another peer TODO: what if this.canvasStream is null?
@@ -919,38 +939,45 @@ class Room extends React.Component {
             savedlines: [],
             paintOn: !this.state.paintOn
         });
-        // if (this.paintOn) {
-        //     this.paintOn = false;
-        //     // this.streamFeed();
-        //     // handTrack.stopVideo()
-        // } else {
-        //     // this.paintOn = true;
-
-        //     // let feed = document.getElementById('feed');
-        //     // let context = feed.getContext('2d');
-        //     // context.clearRect(0, 0, feed.width, feed.height);
-
-
-        //     // handTrack.startVideo(this.video.current).then(function (status) {
-        //     // if (status) {
-        //     // self.setState({ videoPlayStatus: true })
-        //     // this.runDetection();
-        //     // } else {
-        //     // console.log("Camera not available")
-        //     // self.setState({ highlightText: "Please enable camera to use video detection" })
-        //     // self.setState({ showHighlight: true })
-        //     // setTimeout(() => {
-        //     // self.setState({ showHighlight: false })
-        //     // }, 6000);
-        //     // }
-        //     // })
-        // }
     }
 
     sendMessage(message) {
-        //TODO: add to messagelist and send to all other users
+        // push new message to my messagelist then send to others
+        // TODO: add to messagelist and send to all other users
         console.log('message', message);
-        this.messages.push({ name: this.state.localId, type: "local", text: message })
+        let temp = { id: this.state.localId, name: (this.state.hosting ? "host" : "peer"), type: '', text: message };
+        let tempMessages = this.state.messages;
+        tempMessages.push(temp);
+        this.setState({
+            messages: tempMessages,
+        })
+        console.log('this.state.messages', this.state.messages);
+        if (this.dataConnection) {
+            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+            this.dataConnection.send([temp]);
+            this.backlogMessages = [];
+        } else {
+            this.backlogMessages.push(temp);
+        }
+    }
+
+    adminMessage(message) {
+        // push new message to my messagelist then send to others
+        // TODO: add to messagelist and send to all other users
+        console.log('message', message);
+        let temp = { id: '', name: '', type: 'meta', text: message };
+        let tempMessages = this.state.messages;
+        tempMessages.push(temp[0]);
+        this.setState({
+            messages: tempMessages,
+        })
+        if (this.dataConnection) {
+            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+            this.dataConnection.send([temp]);
+            this.backlogMessages = [];
+        } else {
+            this.backlogMessages.push(temp);
+        }
     }
 
     newWord() {
@@ -965,47 +992,6 @@ class Room extends React.Component {
         //TODO: mute toggle
     }
 
-    // // when peer key submitted, call should start and associated event listeners should be set
-    // handleSubmit(event) {
-    //     event.preventDefault();
-    //     // Request a videocall the other user
-    //     console.log('Calling to ' + this.state.value);
-    //     console.log(this.peer);
-    //     let video = document.getElementById('peer-camera');
-    //     video.style.display = 'inline-block';
-
-
-    //     // make connection to another peer
-    //     let conn = this.peer.connect(this.state.value, "hi");
-    //     conn.on('open', () => {
-    //         conn.on('data', (data) => {
-    //             console.log('Received', data);
-    //         });
-    //         conn.send('hi!');
-    //     });
-
-    //     // // make call to another peer TODO: what if this.canvasStream is null?
-    //     // let call = this.peer.call(this.state.value, this.canvasStream);
-    //     // call.on('stream', (stream) => {
-    //     //     this.peer_stream = stream;
-    //     //     this.onReceiveStream(stream, 'peer-camera');
-
-    //     //     // Handle when the call finishes
-    //     //     call.on('close', () => {
-    //     //         alert("The videocall has finished");
-    //     //         let video = document.getElementById('peer-camera');
-    //     //         video.style.display = 'none';
-    //     //     });
-
-    //     // });
-    // }
-
-    // // show the incoming video stream
-    // handleChange2(event) {
-    //     this.setState({ value: event.target.value });
-    // }
-
-    // https://getbootstrap.com/docs/4.4/utilities/position/
     render() {
         return (
             <div
@@ -1016,29 +1002,18 @@ class Room extends React.Component {
                 <GameHeader
                     id={this.state.localId}
                     hosting={this.state.hosting}
+                    onClick={(this.state.hosting ? this.endRoom : this.endCall)}
                 />
                 <div id="body" className='bg-light page' style={{
                     display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
                     marginTop: '89px',
-                    // marginBottom: '85px',
-                    // position: 'absolute',
-                    // top: 0, right: 0, bottom: 0, left: 0,
                 }}>
                     <div id="left" style={{ display: 'flex', alignItems: 'stretch', flexBasis: '20%', maxWidth: '20%' }}>
                         <ChatBox
                             // TODO: When peerlist update, send message to chat
                             onClick={this.sendMessage.bind(this)}
-                            messages={this.messages}
+                            messages={this.state.messages}
                         />
-                        {/* <div className="peer-id" id="peer-id-form">
-                            <form onSubmit={this.handleSubmit.bind(this)}>
-                                <label>
-                                    Enter Peer ID:
-                                    <input type="text" value={this.state.value} onChange={this.handleChange2.bind(this)} required />
-                                </label>
-                                <button type="submit">Submit</button>
-                            </form>
-                        </div> */}
                     </div>
                     <div id="right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
                         <div id='top' style={{ display: 'flex', height: '75vh', flexBasis: '80%', maxWidth: '100%', }}>
