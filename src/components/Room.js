@@ -780,8 +780,11 @@ class Room extends React.Component {
             this.onReceiveStream(stream, 'my-camera');
             callbacks ? this.streamFeed(() => callbacks()) : this.streamFeed();
         }).catch((err) => {
-            alert("Cannot get access to your camera and video !");
+            alert("Cannot get access to your camera and video! Be warned that you cannot play unless your camera is on...");
             console.error(err);
+            this.setState({
+                camOn: false,
+            });
             // TODO: handle no cam
             // this.requestLocalVideo();
 
@@ -825,7 +828,7 @@ class Room extends React.Component {
             });
 
             console.log('callbacks', callbacks);
-            callbacks ? this.requestLocalVideo(() => callbacks()): this.requestLocalVideo();
+            callbacks ? this.requestLocalVideo(() => callbacks()) : this.requestLocalVideo();
         }
     }
 
