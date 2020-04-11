@@ -325,6 +325,10 @@ class Streams extends React.Component {
 
 class CallOptions extends React.Component {
 
+    toggleCam() {
+        this.props.toggleCam();
+    }
+
     render() {
         return (
             <div>
@@ -335,12 +339,12 @@ class CallOptions extends React.Component {
                     overlay={<Tooltip>Camera {this.props.camOn ? "On" : "Off"}</Tooltip>}>
                     {this.props.camOn ?
                         // on
-                        <Button variant="info" onClick={this.props.toggleCam} size="lg" >
+                        <Button variant="info" onClick={this.toggleCam.bind(this)} size="lg" >
                             <MdVideocam />
                         </Button>
                         :
                         // off
-                        <Button variant="outline-secondary" onClick={this.props.toggleCam} size="lg" >
+                        <Button variant="outline-secondary" onClick={this.toggleCam.bind(this)} size="lg" >
                             <MdVideocamOff />
                         </Button>
                     }
@@ -774,7 +778,7 @@ class Room extends React.Component {
         navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
             this.localStream = stream;
             this.onReceiveStream(stream, 'my-camera');
-            this.streamFeed(() => callbacks());
+            callbacks ? this.streamFeed(() => callbacks()) : this.streamFeed();
         }).catch((err) => {
             alert("Cannot get access to your camera and video !");
             console.error(err);
@@ -820,7 +824,8 @@ class Room extends React.Component {
                 camOn: true
             });
 
-            this.requestLocalVideo(() => callbacks());
+            console.log('callbacks', callbacks);
+            callbacks ? this.requestLocalVideo(() => callbacks()): this.requestLocalVideo();
         }
     }
 
