@@ -436,6 +436,7 @@ class Room extends React.Component {
             // from homepage
             starterWord: '',
             category: '',
+            wordsArray: [],
             winningScore: 0,
             hostId: '',
 
@@ -1061,8 +1062,28 @@ class Room extends React.Component {
         }
     }
 
+    getWordsArray() {
+        // /words/:type/:word
+        fetch(`/words/${this.state.category}/${this.state.starterWord}`)
+            .then((res) => {console.log(res); res.json();})
+            .then((wordsResponse) => this.setState({ wordsArray: wordsResponse }));
+    }
+
     newWord() {
-        //TODO: datamuse API
+        // onClick function for word
+        let words = this.state.wordsArray;
+        console.log(words);
+        let newWord;
+        if(words !== null && words.length !== 0){
+            newWord = words.pop();
+            
+            this.setState({
+                currentWord: newWord
+            });
+        } else {
+            this.getWordsArray();
+        }
+        console.log(newWord);
     }
 
     toggleMute() {
