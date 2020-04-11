@@ -14,13 +14,15 @@ class CardOneForm extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            redirect: false
+        };
+
         this.wordInput = React.createRef();
         this.categoryInput = React.createRef();
         this.scoreInput = React.createRef();
 
         this.validate = false;
-        this.redirect = false;
-
 
         this.enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
         this.wordCategory = "You will get words based on the category you choose.";
@@ -35,12 +37,16 @@ class CardOneForm extends React.Component {
             event.preventDefault();
             event.stopPropagation();
         } else {
-            this.redirect = true;
+            this.setState({
+                redirect: true
+            });
         }
 
         this.validate = true;
+    }
 
-        if (this.redirect) {
+    render() {
+        if (this.state.redirect) {
             if (this.wordInput) data.word = this.wordInput.current.value;
             if (this.categoryInput) data.category = this.categoryInput.current.value;
             if (this.scoreInput) data.score = this.scoreInput.current.value;
@@ -52,9 +58,6 @@ class CardOneForm extends React.Component {
                 }
             }} />;
         }
-    }
-
-    render() {
         return (
             <Form noValidate validated={this.validate} onSubmit={this.handleSubmit.bind(this)}>
                 {/* enter a word */}
@@ -127,10 +130,13 @@ class CardOneForm extends React.Component {
 class CardTwoForm extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            redirect: false
+        };
+
         this.codeInput = React.createRef();
 
         this.validate = false;
-        this.redirect = false;
     }
 
     handleSubmit(event) {
@@ -140,12 +146,16 @@ class CardTwoForm extends React.Component {
             event.preventDefault();
             event.stopPropagation();
         } else {
-            this.redirect = true;
+            this.setState({
+                redirect: true
+            });
         }
 
         this.validate = true;
+    }
 
-        if (this.redirect) {
+    render() {
+        if (this.state.redirect) {
             if (this.codeInput) data.code = this.codeInput.current.value;
             return <Redirect push to={{
                 pathname: '/room',
@@ -156,9 +166,6 @@ class CardTwoForm extends React.Component {
             }} />;
             // console.log('data', data);
         }
-    }
-
-    render() {
         return (
             <Form noValidate validated={this.validate} onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Group as={Col} controlId="enter-word">
