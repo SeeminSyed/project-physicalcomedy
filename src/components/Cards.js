@@ -6,10 +6,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Instructions from './Instructions';
-import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 
-let data = {word: '', category: 'Nouns', score: '', code: ''};
+let data = { word: '', category: 'Nouns', score: '', code: '' };
 
 function CardOneForm() {
     const [validate, setValidate] = useState(false);
@@ -36,7 +35,7 @@ function CardOneForm() {
             pathname: '/room',
             state: {
                 hosting: true,
-                hostId: data,
+                data: data,
             }
         }} />;
     }
@@ -45,7 +44,7 @@ function CardOneForm() {
         event.persist();
         if (event.nativeEvent.data === null) {
             // remove the last character
-            data.word = data.word.slice(0, data.score.length-1);
+            data.word = data.word.slice(0, data.score.length - 1);
         } else {
             data.word = data.word.concat(event.nativeEvent.data);
         }
@@ -62,7 +61,7 @@ function CardOneForm() {
         event.persist();
         if (event.nativeEvent.data === null) {
             // remove the last character
-            data.score = data.score.slice(0, data.score.length-1);
+            data.score = data.score.slice(0, data.score.length - 1);
         } else {
             data.score = data.score.concat(event.nativeEvent.data);
         }
@@ -150,7 +149,7 @@ function CardTwoForm() {
             pathname: '/room',
             state: {
                 hosting: false,
-                hostId: data,
+                data: data,
             }
         }} />;
     }
@@ -159,7 +158,7 @@ function CardTwoForm() {
         event.persist();
         if (event.nativeEvent.data === null) {
             // remove the last character
-            data.code = data.code.slice(0, data.score.length-1);
+            data.code = data.code.slice(0, data.score.length - 1);
         } else {
             data.code = data.code.concat(event.nativeEvent.data);
         }
@@ -193,8 +192,8 @@ export default class Cards extends React.Component {
 
     render() {
         return (
-            <div>
-                <Accordion defaultActiveKey="0">
+            <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', marginLeft: '10%', marginRight: '10%', marginBottom: '30px', flexWrap: 'wrap' }}>
+                <Accordion defaultActiveKey="1">
                     {/* Create a room */}
                     <Card border="info" style={{ width: '500px', margin: '10px' }}>
                         <Card.Header>

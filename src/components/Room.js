@@ -10,9 +10,8 @@ import Form from 'react-bootstrap/Form';
 import { MdContentCopy, MdClear, MdVideocam, MdVideocamOff, MdCallEnd, MdRefresh } from 'react-icons/md';
 import { FaMicrophoneSlash, FaMicrophone, FaPaintBrush } from 'react-icons/fa';
 import Footer from '../components/Footer';
-// https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
-// https://www.andismith.com/blogs/2012/07/extending-getusermedia/
-
+import { Redirect } from 'react-router';
+import Alert from 'react-bootstrap/Alert';
 
 class GameHeader extends React.Component {
 
@@ -21,7 +20,7 @@ class GameHeader extends React.Component {
         // copy room code to clipboard
         this.textArea.select();
         document.execCommand('copy');
-        e.target.focus();
+        // e.target.focus();
     }
 
     render() {
@@ -255,7 +254,7 @@ class Streams extends React.Component {
             }}>
                 <video id="my-camera" width="300" height="225" autoPlay="autoplay" muted={true} /*className="mx-auto d-block"*/></video>
                 <canvas id="feed" ></canvas>
-                <video id="peer-camera" width="300" height="225" autoPlay="autoplay" /*className="mx-auto d-block"*/></video>
+                <video id="peer-camera" width="300" height="225" autoPlay="autoplay" style={{ display: 'none', }} /*className="mx-auto d-block"*/></video>
                 {/* <div id="peers">
                     {this.state.myPeers.map((peer) => (
                         <div key={peer.id}>
@@ -271,7 +270,6 @@ class Streams extends React.Component {
 class CallOptions extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
     render() {
@@ -330,7 +328,6 @@ class CallOptions extends React.Component {
 class GameOptions extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
     }
 
     render() {
@@ -374,6 +371,10 @@ class Room extends React.Component {
             localId: '',
             localName: '',
             hosting: false,
+            starterWord: '',
+            category: '',
+            winningScore: 0,
+            hostId: '',
             // handtrackjs
             modelParams: {
                 flipHorizontal: true,   // flip e.g for video  
@@ -390,8 +391,6 @@ class Room extends React.Component {
             muted: true,
             paintOn: false,
 
-
-
             // value TODO: delete
             value: '',
 
@@ -403,7 +402,7 @@ class Room extends React.Component {
         this.localStream = null;
         this.canvasStream = null;
         // TODO: move this into the myPeers object 
-        this.peer_mediaConnection = null;
+        this.peer_stream = null;
 
         this.messages = [
             {
@@ -427,35 +426,14 @@ class Room extends React.Component {
         // this.muted = true;
         // this.camOn = false;
         // this.paintOn = false;
-        this.nxpos = 0;
-        this.nypos = 0;
+        this.nxpos = 300 / 2;
+        this.nypos = 300 / 2;
 
         // Function binding
 
-        // make peer 
+        // create peer TODO: user proper peer server
         this.peer = new Peer();
-        console.log("Current peer", this.peer);
-    }
-
-    componentDidMount() {
-        // TODO: get parameters from previous page
-        if (this.props.location.state) console.log("this.props.location.state", this.props.location.state);
-
-        let video = document.getElementById('peer-camera');
-        video.style.display = 'none';
-
-        this.nxpos = 300 / 2;
-        this.nypos = 225 / 2;
-
-
-        // load handtrack model
-        console.log("loading model...");
-        handTrack.load(this.state.modelParams).then(loadedModel => {
-            this.setState({ model: loadedModel });
-            this.setState({ modelLoaded: true });
-            console.log("model loaded", this.state.model);
-        });
-
+        console.log("Current peer", this.peer.id);
 
         // set up peer connection to the SERVER
         this.peer.on('open', (localId) => {
@@ -467,73 +445,148 @@ class Room extends React.Component {
             });
         });
 
+        // load handtrack model
+        console.log("loading model...");
+        handTrack.load(this.state.modelParams).then(loadedModel => {
+            this.setState({ model: loadedModel });
+            this.setState({ modelLoaded: true });
+            console.log("model loaded", this.state.model);
+        });
+
         // generic error handling TODO: Clarify!!!
         this.peer.on('error', (err) => {
-            alert("An error ocurred with peer: " + err);
-            console.error(err);
-        });
-
-        // Handle the on receive data event
-        this.peer.on('connection', (dataConnection) => {
-            // Emitted when the connection is established and ready-to-use. 
-            dataConnection.on('open', () => {
-                // Emitted when data is received from the remote peer.
-                dataConnection.on('data', (data) => {
-                    console.log('Received', data);
-                });
-                // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
-                // on connection, send list of messages to user
-                dataConnection.send('Hello!');
-            });
-            // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
-            // dataConnection.close();
-        });
-
-        // handle the on receive call event
-        this.peer.on('call', (mediaConnection) => {
-            this.mediaConnection = mediaConnection;
-
-            // TODO: remove toggle and clean up behavior
-            // this.camOn = false;
-            // this.setState({
-            //     camOn: false
-            // });
-            // this.toggleCam();
-
-            // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
-            // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
-            let acceptsCall = true;
-
-            if (acceptsCall) {
-                // Answer the call with your own video/audio stream
-                let video = document.getElementById('peer-camera');
-                video.style.display = 'inline-block';
-                mediaConnection.answer(this.canvasStream);
-
-                // Emitted when a remote peer adds a stream
-                mediaConnection.on('stream', (mediaConnection) => {
-                    // Store a global reference of the other user stream
-                    this.peer_mediaConnection = mediaConnection;
-                    // Display the stream of the other user in the peer-camera video element
-                    this.onReceiveStream(mediaConnection, 'peer-camera');
-                });
-
-                // Handle when a remote peer ends the call
-                mediaConnection.on('close', () => {
-                    // TODO: on close, remove from peer list
-                    alert("The videocall has finished");
-                    let video = document.getElementById('peer-camera');
-                    video.style.display = 'none';
-                    this.peer_mediaConnection = null;
-                    this.endCall();
-                });
-
-                // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
-                // mediaConnection.close();
-            } else {
-                console.log("Call denied !");
+            switch (err.type) {
+                case 'peer-unavailable': // if host not exist, alert and redirect to home
+                    alert("The room you're looking to join doesn't exist... Are you sure you have the right Room Code? ");
+                    console.log("redirect to homepage");
+                    window.location.replace("../");
+                    break;
+                default:
+                    alert("An error ocurred with peer: " + err);
+                    console.error(err);
+                    break;
             }
         });
+    }
+
+    componentDidMount() {
+        if (this.props.location.state) {
+            console.log("this.props.location.state", this.props.location.state);
+            if (this.props.location.state.hosting) {
+                this.setState({
+                    hosting: true,
+                    starterWord: this.props.location.state.data.word,
+                    category: this.props.location.state.data.category,
+                    winningScore: parseInt(this.props.location.state.data.score),
+                });
+
+                // ask for camera: if no, error warning
+                this.setState({
+                    camOn: false
+                });
+                this.toggleCam();
+
+                // wait for connections, data and media
+
+                // Handle the on receive data event
+                this.peer.on('connection', (dataConnection) => {
+                    this.dataConnection = dataConnection;
+                    // Emitted when the connection is established and ready-to-use. 
+                    this.dataConnection.on('open', () => {
+                        // Emitted when data is received from the remote peer.
+                        this.dataConnection.on('data', (data) => {
+                            console.log('Received', data);
+                        });
+                        // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
+                        // on connection, send list of messages to user
+                        this.dataConnection.send('Hello!');
+                    });
+                    // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
+                    // dataConnection.close();
+                });
+
+                // handle the on receive call event
+                this.peer.on('call', (mediaConnection) => {
+                    this.mediaConnection = mediaConnection;
+
+                    // TODO: reject call functionality: make connection, send username, add id to list, make call, accept call if on list
+                    // let acceptsCall = confirm("Videocall incoming, do you want to accept it ?");
+                    let acceptsCall = true;
+
+                    if (acceptsCall) {
+                        // Answer the call with your own video/audio stream
+                        let video = document.getElementById('peer-camera');
+                        video.style.display = 'inline-block';
+                        this.mediaConnection.answer(this.canvasStream);
+
+                        // Emitted when a remote peer adds a stream
+                        this.mediaConnection.on('stream', (peer_stream) => {
+                            // Store a global reference of the other user stream
+                            this.peer_stream = peer_stream;
+                            // Display the stream of the other user in the peer-camera video element
+                            this.onReceiveStream(this.peer_stream, 'peer-camera');
+                        });
+
+                        // Handle when a remote peer ends the call
+                        this.mediaConnection.on('close', () => {
+                            // TODO: on close, remove from peer list
+                            alert("The videocall has finished");
+                            let video = document.getElementById('peer-camera');
+                            video.style.display = 'none';
+                            this.peer_stream = null;
+                            this.endCall();
+                        });
+
+                        // // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
+                        // this.mediaConnection.close();
+                    } else {
+                        console.log("Call denied !");
+                    }
+                });
+
+            } else {
+                this.setState({
+                    hosting: false,
+                    hostId: this.props.location.state.data.code,
+                });
+
+                // ask for camera: if no, error warning
+                this.setState({
+                    camOn: false
+                });
+                this.toggleCam();
+
+                // make connection to host, data and media
+                let video = document.getElementById('peer-camera');
+                video.style.display = 'inline-block';
+                console.log('Calling to ' + this.state.value);
+
+                // make connection to another peer
+                this.dataConnection = this.peer.connect(this.state.value, "hi");
+                this.dataConnection.on('open', () => {
+                    this.dataConnection.on('data', (data) => {
+                        console.log('Received', data);
+                    });
+                    this.dataConnection.send('hi!');
+                });
+
+                // make call to another peer TODO: what if this.canvasStream is null?
+                this.mediaConnection = this.peer.call(this.state.value, this.canvasStream);
+                this.mediaConnection.on('stream', (peer_stream) => {
+                    this.peer_stream = peer_stream;
+                    this.onReceiveStream(this.peer_stream, 'peer-camera');
+
+                    // Handle when the call finishes
+                    this.mediaConnection.on('close', () => {
+                    });
+
+                });
+            }
+        } else {
+            // was not directed from home
+            console.log("redirect to homepage");
+            window.location.replace("../");
+        }
 
     }
 
@@ -546,9 +599,13 @@ class Room extends React.Component {
         this.onEndStream('peer-camera');
         if (this.mediaConnection) {
             this.mediaConnection.close();
-        }// this.peer_mediaConnection.getTracks().forEach((track) => {
+        }// this.peer_stream.getTracks().forEach((track) => {
         //     track.stop();
         // });
+        alert("The videocall has finished");
+        this.peer.destroy();
+        console.log("redirect to homepage");
+        window.location.replace("../");
     }
 
     // Handle the providen stream (video and audio) to the desired video element
@@ -571,8 +628,13 @@ class Room extends React.Component {
         let feed = document.getElementById('feed');
         let context = feed.getContext('2d');
         let video = document.getElementById('my-camera');
-        feed.width = video.width;
-        feed.height = video.height;
+        // feed.width = video.width;
+        // feed.height = video.height;
+
+        // TODO: dimensions
+        feed.width = 1280 / 2;
+        feed.height = 720 / 2;
+
         video.style.display = 'none';
         this.canvasStream = feed.captureStream();
 
@@ -635,6 +697,8 @@ class Room extends React.Component {
         }).catch((err) => {
             alert("Cannot get access to your camera and video !");
             console.error(err);
+            // TODO: handle no cam
+            // this.requestLocalVideo();
 
         })
     }
@@ -647,9 +711,9 @@ class Room extends React.Component {
         // video.src = window.URL.createObjectURL(stream);
         video.srcObject = null;
 
-        // Store a global reference of the stream
-        // TODO: abstract this to peers list
-        this.peer_mediaConnection = null;
+        // // Store a global reference of the stream
+        // // TODO: abstract this to peers list
+        // this.peer_stream = null;
 
     }
 
