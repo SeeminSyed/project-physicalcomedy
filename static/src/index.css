@@ -1,9 +1,21 @@
 body {
-  background-color: rgba(50, 115, 220, 0.3);
-  margin: 0;
+  background-color: white;
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+  font-family: 'Raleway', sans-serif;
+}
+
+h3 {
+  font-family: 'Raleway', sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0px 0px 20px;
+  font-size: 30px;
+  color: #095663;
 }
 
 code {

@@ -31,14 +31,13 @@ const guessWord = {
 export default class Words extends React.Component {
     constructor() {
         super();
-        this.state = { word: '', words:[] }; // holds the recently popped word
-        this.getWords(); // populates words
+        this.state = { word: '', words:[] };
+        this.getWords(this.props.category, this.props.word); // populates words
         this.handleClick = this.handleClick.bind(this);
     }
     
-    getWords() {
-        //TODO: get words based on user input
-        fetch('/words/Noun/tree')
+    getWords(category, word) {
+        fetch(`/words/${category}/${word}`)
             .then(res => res.json())
             .then(wordsResponse => this.setState({ words: wordsResponse }));
     }
@@ -47,17 +46,25 @@ export default class Words extends React.Component {
         e.preventDefault();
         let words = this.state.words;
         console.log(words);
-        let newWord = words.pop();
+        let newWord;
+        if(words.length !== 0){
+            newWord = words.pop();
+        } else {
+            this.getWords(this.props.category, this.props.word);
+            // this or prompt the user for another input..
+        }
+        console.log(newWord);
         this.setState({
             word: newWord
         });
     }
 
+
     render() {
         return (
             <div>
                 <div style={wordIs}>
-                    Word is..
+                    Word is.. 
                     <div id="guess-word" style={guessWord}>
                         {this.state.word}
                     </div>
