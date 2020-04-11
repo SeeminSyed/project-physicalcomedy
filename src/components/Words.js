@@ -1,5 +1,4 @@
 import React from 'react'
-const datamuse = require('datamuse');
 
 const button = {
     background: '#ffffff',
@@ -29,41 +28,37 @@ const guessWord = {
     fontFamily: `'Raleway', sans-serif`,
 }
 
-// stores all the words recieved from the API
-// -> reduces API calls
-const words = [];
-
 export default class Words extends React.Component {
     constructor() {
         super();
-        this.state = { word: '' }; // holds the recently popped word
-        this.getWords(); // populates words
+        this.state = { word: '', words:[] };
+        this.getWords(this.props.category, this.props.word); // populates words
         this.handleClick = this.handleClick.bind(this);
     }
-    getWords() {
-        // adjectives related to beach
-        datamuse.request('words?rel_jjb=beach').then((json) => {
-            console.log(json);
-            this.populateArray(json);
-        });
-    }
-
-    populateArray(json) {
-        let word;
-        for (let i = 0; i < json.length; i++) {
-            word = json[i].word;
-            words.push(word);
-        }
+    
+    getWords(category, word) {
+        fetch(`/words/${category}/${word}`)
+            .then(res => res.json())
+            .then(wordsResponse => this.setState({ words: wordsResponse }));
     }
 
     handleClick(e) {
         e.preventDefault();
+        let words = this.state.words;
         console.log(words);
-        let newWord = words.pop();
+        let newWord;
+        if(words.length !== 0){
+            newWord = words.pop();
+        } else {
+            this.getWords(this.props.category, this.props.word);
+            // this or prompt the user for another input..
+        }
+        console.log(newWord);
         this.setState({
             word: newWord
         });
     }
+
 
     render() {
         return (
