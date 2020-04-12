@@ -105,11 +105,11 @@ class GameHeader extends React.Component {
                 width: '100%',
             }}>
                 {/* Title */}
-                <div><span role='img' aria-label='emoji'>🎉</span> Physical Comedy </div>
+                <div style={{ padding: '0px', }}><span role='img' aria-label='emoji'>🎉</span> Physical Comedy </div>
                 {/* Room Code */}
                 {
                     this.props.hosting ?
-                        <div>
+                        <div style={{ padding: '0px', display: 'flex', flexDirection: 'row', marginRight: '10px', }}>
                             <textarea
                                 readOnly={true}
                                 spellCheck='false'
@@ -124,7 +124,7 @@ class GameHeader extends React.Component {
                                 value={this.props.id}
                                 onClick={this.ctrlC.bind(this)}
                             />
-                            <div id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </div>
+                            <span id='roomId' style={{ fontSize: '80%', marginRight: '10px', }} >Room Code: {this.props.id} </span>
                             <OverlayTrigger
                                 delay={{ show: 0, hide: 400 }}
                                 placement='bottom'
@@ -486,12 +486,11 @@ class Room extends React.Component {
             switch (err.type) {
                 case 'peer-unavailable': // if host not exist, alert and redirect to home
                     alert("The room you're looking to join doesn't exist... Are you sure you have the right Room Code? ");
-
                     window.location.replace('../');
                     break;
                 default:
                     alert('An error ocurred with peer: ' + err);
-                    console.error(err);
+                    window.location.replace('../');
                     break;
             }
         });
@@ -545,6 +544,12 @@ class Room extends React.Component {
                                             });
                                             break;
                                         }
+                                        case 'denied': {
+                                            // update score
+                                            alert(temp.text);
+                                            window.location.replace('../');
+                                            break;
+                                        }
                                         case 'words': {
                                             // update words
                                             this.setState({
@@ -592,14 +597,21 @@ class Room extends React.Component {
                                 this.peer_stream = peer_stream;
                                 // Display the stream of the other user in the peer-camera video element
                                 this.onReceiveStream(this.peer_stream, 'peer-camera');
+                                console.log('me!');
+                                this.adminMessage('peer has joined~');
                             });
                             // Handle when a remote peer ends the call
                             this.mediaConnection.on('close', () => {
-                                this.endCall();
+                                alert("Peer has left the call!");
                             });
                         } else {
                             this.mediaConnection.close();
-                            if (this.dataConnection) this.dataConnection.close();
+                            if (this.dataConnection) {
+                                this.dataConnection.send([{ id: '', name: '', type: 'denied', text: 'The host has denied your call... Please try again!' }],
+                                    () => {
+                                        this.dataConnection.close();
+                                    });
+                            }
                         }
                     });
 
@@ -634,6 +646,12 @@ class Room extends React.Component {
                                                 });
                                                 break;
                                             }
+                                            case 'denied': {
+                                                // update score
+                                                alert(temp.text);
+                                                window.location.replace('../');
+                                                break;
+                                            }
                                             case 'words': {
                                                 // update words
                                                 this.setState({
@@ -655,22 +673,22 @@ class Room extends React.Component {
                                         }
                                     });
                                 });
-                                this.adminMessage('peer has joined~');
-                            });
 
-                            // make call to another peer
-                            this.mediaConnection = this.peer.call(this.state.hostId, this.canvasStream);
-                            this.mediaConnection.on('stream', (peer_stream) => {
-                                this.peer_stream = peer_stream;
-                                this.onReceiveStream(this.peer_stream, 'peer-camera');
+                                // make call to another peer
+                                this.mediaConnection = this.peer.call(this.state.hostId, this.canvasStream);
+                                this.mediaConnection.on('stream', (peer_stream) => {
+                                    this.peer_stream = peer_stream;
+                                    this.onReceiveStream(this.peer_stream, 'peer-camera');
 
-                                // Handle when the call finishes
-                                this.mediaConnection.on('close', () => {
-                                    this.endCall();
+                                    // Handle when the call finishes
+                                    this.mediaConnection.on('close', () => {
+                                        alert('The host has ended the call!');
+                                        if (this.dataConnection) this.dataConnection.close();
+                                    });
+
                                 });
 
                             });
-
                         });
                     }
                 }
@@ -697,7 +715,6 @@ class Room extends React.Component {
         if (this.state.camOn) {
             this.toggleCam();
         }
-        alert('The videocall has finished');
 
         // end peer
         this.peer.destroy();
@@ -721,11 +738,9 @@ class Room extends React.Component {
         if (this.state.camOn) {
             this.toggleCam();
         }
-        alert('The videocall has finished');
 
         // end peer
         this.peer.destroy();
-
         window.location.replace('../');
     }
 
@@ -804,7 +819,6 @@ class Room extends React.Component {
             callbacks ? this.streamFeed(() => callbacks()) : this.streamFeed();
         }).catch((err) => {
             alert('Cannot get access to your camera and video! Be warned that you cannot connect to friends and play unless your camera is on...');
-            console.error(err);
             this.setState({
                 camOn: false,
             });
@@ -830,9 +844,11 @@ class Room extends React.Component {
             });
 
             this.onEndStream('my-camera');
-            this.localStream.getTracks().forEach((track) => {
-                track.stop();
-            });
+            if (this.localStream) {
+                this.localStream.getTracks().forEach((track) => {
+                    track.stop();
+                });
+            }
 
         } else {
             // turning on
