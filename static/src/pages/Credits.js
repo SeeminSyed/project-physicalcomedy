@@ -39,15 +39,15 @@ export default class Credits extends React.Component {
                                         <li> <a rel="noopener noreferrer" target="_blank" href="https://fonts.google.com/">Google Fonts</a>.</li>
                                         <li><a rel="noopener noreferrer" target="_blank" href="http://codepen.io/">Codepen.io </a></li>
                                         <li><a rel="noopener noreferrer" target="_blank" href="https://react-bootstrap.netlify.com/">Bootstrap for React</a>.</li>
-                                        {/* <li></li> Peerjs Articles? */}
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API">MDN Web Documentation</a>.</li>
                                     </Col>
                                     <Col>
                                         <li> <a rel="noopener noreferrer" target="_blank" href="https://stackoverflow.com/">Stack Overflow</a> to help us with debugging.</li>
                                         <li> Many <a rel="noopener noreferrer" target="_blank" href="https://hackernoon.com"> Hackernoon</a> and <a rel="noopener noreferrer" target="_blank" href="http://medium.com/"> Medium </a> Articles.</li>
-                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js">Video Chat</a> Peerjs Example and <a rel="noopener noreferrer" target="_blank" href="https://www.andismith.com/blogs/2012/07/extending-getusermedia/">Andi Smith's</a> Articled </li>
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js">Video Chat</a> Peerjs Example and <a rel="noopener noreferrer" target="_blank" href="https://www.andismith.com/blogs/2012/07/extending-getusermedia/">Andi Smith's</a> Article.</li>
                                         <li><a rel="noopener noreferrer" target="_blank" href="https://heroku.com">Heroku</a> and <a rel="noopener noreferrer" target="_blank" href="https://daveceddia.com/deploy-react-express-app-heroku/"> Dave Ceddia's</a> article on deployment of React and Express Applications.</li>
-                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://heroku.com">Gesture Detection</a>, a npm package to help us with gesture detection.</li>
-                                        {/* <li></li> Peerjs Articles? */}
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://www.npmjs.com/package/handtrackjs">Gesture Detection</a>, a npm package to help us with gesture detection.</li>
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="https://www.cometchat.com/tutorials/build-an-anonymous-chat-app-with-react-react-bootstrap/">CometChat</a>, a reference project.</li>
                                     </Col>
                                 </Row>
                             </ul>
