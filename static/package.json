@@ -1,0 +1,51 @@
+{
+  "name": "project-physicalcomedy1",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^10.0.0",
+    "bootstrap": "^4.4.1",
+    "browserify": "^16.5.0",
+    "datamuse": "^1.0.5",
+    "express": "^4.17.1",
+    "handtrackjs": "0.0.13",
+    "peer": "^0.3.2",
+    "peerjs": "^1.2.0",
+    "randomstring": "^1.1.5",
+    "react": "^16.13.0",
+    "react-async": "^10.0.0",
+    "react-bootstrap": "^1.0.0",
+    "react-dom": "^16.13.0",
+    "react-icons": "^3.9.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version",
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:5000"
+}
