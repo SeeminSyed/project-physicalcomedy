@@ -309,7 +309,7 @@ class CallOptions extends React.Component {
                     placement='top'
                     delay={{ show: 250, hide: 400 }}
                     // if on, show off, if off, show on
-                    overlay={<Tooltip>{this.props.muted ? 'Muted' : 'UnMuted'}</Tooltip>}>
+                    overlay={<Tooltip>{this.props.muted ? 'Muted' : 'Unmuted'}</Tooltip>}>
                     {this.props.muted ?
                         // off
                         <Button variant='outline-secondary' onClick={this.props.toggleMute} size='lg' >
@@ -453,8 +453,8 @@ class Room extends React.Component {
         this.canvasStream = null;
         this.peer_stream = null;
 
-        this.nxpos = 300 / 2;
-        this.nypos = 300 / 2;
+        this.nxpos = 480 / 2;
+        this.nypos = 360 / 2;
 
         this.backlogMessages = [];
 
@@ -520,7 +520,10 @@ class Room extends React.Component {
 
                     // ask for camera
                     if (!this.state.camOn) {
-                        this.toggleCam();
+                        this.toggleCam(() =>
+                            this.setState({
+                                muted: false
+                            }));
                     }
                     // wait for connections, data and media
 
@@ -609,6 +612,9 @@ class Room extends React.Component {
                     // ask for camera
                     if (!this.state.camOn) {
                         this.toggleCam(() => {
+                            this.setState({
+                                muted: false
+                            });
 
                             // make connection to host, data and media
                             let video = document.getElementById('peer-camera');
@@ -818,7 +824,7 @@ class Room extends React.Component {
             // turning off
             this.setState({
                 camOn: false,
-                muted: true
+                muted: true,
             });
 
             this.onEndStream('my-camera');
@@ -830,7 +836,7 @@ class Room extends React.Component {
             // turning on
             this.setState({
                 camOn: true,
-                muted: true
+                muted: true,
             });
 
             callbacks ? this.requestLocalVideo(() => callbacks()) : this.requestLocalVideo();
@@ -873,7 +879,7 @@ class Room extends React.Component {
 
     drawDoodle(canvasContext) {
         let newLines = this.state.savedlines;
-        newLines.push({ xpos: 300 - this.nxpos, ypos: this.nypos });
+        newLines.push({ xpos: 480 - this.nxpos, ypos: this.nypos });
         this.setState({ savedlines: newLines });
 
         for (let i = 1; i < newLines.length; i++) {
