@@ -164,7 +164,6 @@ class CardTwoForm extends React.Component {
                     data: data,
                 }
             }} />;
-            // console.log('data', data);
         }
         return (
             <Form noValidate validated={this.validate} onSubmit={this.handleSubmit.bind(this)}>

@@ -20,7 +20,7 @@ export default class Header extends React.Component {
         return (
             <header style={header}>
                 <text style={text}>
-                <span role="img" aria-label="emoji">🎉</span> <a href="/" style={text}>Physical Comedy</a>
+                    <span role="img" aria-label="emoji">🎉</span> <a href="/" style={text}>Physical Comedy</a>
                 </text>
             </header>
         )
