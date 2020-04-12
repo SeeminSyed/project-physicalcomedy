@@ -55,3 +55,6 @@ Following are the top five technical challenges that we have anticipated:
 - Change directory to `static` and run `npm install`
 - To start the **server**, run `npm start` in the root directory (directory with `app.js`)
 - To start the **client**, run `npm start` in `static` directory
+
+### REST API Documentation
+- Documentation for the APIs used can be found in APIDocumentation.md, in the root folder
