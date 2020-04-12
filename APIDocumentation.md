@@ -4,6 +4,11 @@
 ### Read
 * description: retrieves a list of words for the user
 * request: GET `/words/:category/:word`
+    * `category` - One of Nouns, Adjectives, Synonyms, Antonyms, Rhymes and Homophones
+    * `word` - user input.
+    
+    Players are asked to act or doodle words related to the word and category that they entered.
+    Example: If user entered 'tree' as a word and chose 'Nouns' as category, a possible word that a player can get is 'trunk'.
 * response: 200
     * content-type: `application/json`
     * body: object
