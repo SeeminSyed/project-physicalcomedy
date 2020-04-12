@@ -603,7 +603,9 @@ class Room extends React.Component {
                             });
                             // Handle when a remote peer ends the call
                             this.mediaConnection.on('close', () => {
-                                alert("Peer has left the call!");
+                                if (!this.HostEnd) alert("Peer has left the call!");
+                                if (this.dataConnection) this.dataConnection.close();
+                                window.location.replace('../');
                             });
                         } else {
                             this.mediaConnection.close();
@@ -702,6 +704,7 @@ class Room extends React.Component {
     }
 
     endRoom() {
+        this.HostEnd = true;
         // end connections
         if (this.dataConnection) {
             this.dataConnection.close();
