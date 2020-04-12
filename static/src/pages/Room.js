@@ -840,12 +840,11 @@ class Room extends React.Component {
             // turning off
             this.setState({
                 camOn: false,
-                muted: true,
             });
 
             this.onEndStream('my-camera');
             if (this.localStream) {
-                this.localStream.getTracks().forEach((track) => {
+                this.localStream.getVideoTracks().forEach((track) => {
                     track.stop();
                 });
             }
@@ -854,7 +853,6 @@ class Room extends React.Component {
             // turning on
             this.setState({
                 camOn: true,
-                muted: true,
             });
 
             callbacks ? this.requestLocalVideo(() => callbacks()) : this.requestLocalVideo();
