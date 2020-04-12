@@ -57,4 +57,4 @@ Following are the top five technical challenges that we have anticipated:
 - To start the **client**, run `npm start` in `static` directory
 
 ### REST API Documentation
-- Documentation for the APIs used can be found in APIDocumentation.md, in the root folder
+- Documentation for the APIs used can be found in [APIDocumentation.md](APIDocumentation.md)
