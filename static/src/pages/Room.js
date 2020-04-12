@@ -939,11 +939,6 @@ class Room extends React.Component {
                 wordsArray: tempWords,
                 currentWord: tempWord,
             }, () => this.sendWords());
-
-            // if my score >= winningScore
-            if (this.state.myScore >= this.state.winningScore) {
-                this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
-            }
         } else {
             this.sendMessage(message);
         }
@@ -963,6 +958,10 @@ class Room extends React.Component {
                 this.backlogMessages = [];
             } else {
                 this.backlogMessages.push(temp);
+            }
+            // if my score >= winningScore
+            if (this.state.myScore >= this.state.winningScore) {
+                this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
             }
         });
     }
