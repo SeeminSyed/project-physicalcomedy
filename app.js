@@ -10,8 +10,6 @@ const datamuse = require('datamuse');
 // serve React files
 app.use(express.static(path.join(__dirname, 'static/build')));
 
-app.get('/', (req, res, next) => res.send('Hello world!'));
-
 function getCode(type) {
     let code = '';
     switch (type) {
@@ -55,18 +53,13 @@ app.get('/words/:type/:word', function (req, res, next) {
     });
 });
 
-// const https = require('https');
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/static/build/index.html'));
+});
+
 const http = require('http');
 const PORT = (process.env.PORT || 5000);
-// from Lab 7
-// var privateKey = fs.readFileSync('server.key');
-// var certificate = fs.readFileSync('server.crt');
-// var config = {
-//     key: privateKey,
-//     cert: certificate
-// };
 
-// const server = https.createServer(config, app);
 const server = http.createServer(app);
 const peerServer = ExpressPeerServer(server, {
     debug: true,

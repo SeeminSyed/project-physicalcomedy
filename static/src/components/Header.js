@@ -10,7 +10,6 @@ const header = {
 
 const text = {
     flexDirection: 'column',
-    padding: '25px',
     color: 'white',
 };
 
@@ -19,9 +18,9 @@ export default class Header extends React.Component {
     render() {
         return (
             <header style={header}>
-                <text style={text}>
-                <span role="img" aria-label="emoji">🎉</span> <a href="/" style={text}>Physical Comedy</a>
-                </text>
+                <div style={text}>
+                    <span role="img" aria-label="emoji">🎉</span> <a href="/" style={text}>Physical Comedy</a>
+                </div>
             </header>
         )
     }
