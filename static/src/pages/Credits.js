@@ -27,7 +27,7 @@ export default class Credits extends React.Component {
                     }}>
                     <Col>
                         <h3>Credits</h3>
-                        <p style={{ margin: "20px", fontSize: "20px", }}>
+                        <div style={{ margin: "20px", fontSize: "20px", }}>
                             Thanks to these amazing projects, design components, UI elements and snippets of code, developing <a href="/">Physical Comedy</a> was a piece of cake <span role="img" aria-label="piece of cake">🍰</span>.
                                 <ul style={{ margin: "10px" }}>
                                 <Row>
@@ -54,7 +54,7 @@ export default class Credits extends React.Component {
                                     </Col>
                                 </Row>
                             </ul>
-                        </p>
+                        </div>
                     </Col>
                 </div>
                 <Footer />

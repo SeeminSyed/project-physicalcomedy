@@ -19,8 +19,8 @@ const routing = (
             {/* Switch component helps us to render the components only when path matches otherwise it fallbacks to the not found component. */}
             <Switch>
                 <Route exact path="/" component={Home} />
-                <Route exact path="/room" component={Room} />
                 <Route exact path="/credits" component={Credits} />
+                <Route exact path="/room" component={Room} />
 
                 <Route component={NotFound} />
             </Switch>
