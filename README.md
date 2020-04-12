@@ -22,7 +22,7 @@ Following are the key features that we plan to finish by the beta version of our
 
 ### Additional Features
 Following are additional features that we plan on finishing by the final version of our project
-- Toggling multiple game modes
+- Toggling between game modes
 - Responsive users instructions 
 - A real-time chat area next to the video
 - Score tracking system
