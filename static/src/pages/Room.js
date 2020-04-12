@@ -458,6 +458,7 @@ class Room extends React.Component {
 
         this.backlogMessages = [];
 
+        this.HostEnd = false;
 
         // Function binding
         this.adminMessage = this.adminMessage.bind(this);
@@ -682,7 +683,7 @@ class Room extends React.Component {
 
                                     // Handle when the call finishes
                                     this.mediaConnection.on('close', () => {
-                                        alert('The host has ended the call!');
+                                        if (this.HostEnd) alert('The host has ended the call!');
                                         if (this.dataConnection) this.dataConnection.close();
                                         window.location.replace('../');
                                     });
@@ -724,6 +725,7 @@ class Room extends React.Component {
     }
 
     endCall() {
+        this.HostEnd = true;
         // end connections
         if (this.dataConnection) {
             this.dataConnection.close();
