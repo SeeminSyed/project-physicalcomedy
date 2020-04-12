@@ -590,7 +590,7 @@ class Room extends React.Component {
                             this.dataConnection.on('data', (data) => {
                                 // data.map((temp) => console.log('Received', temp));
                                 // TODO: when message received, add to personal message list
-                                data.map((temp) => {
+                                data.forEach((temp) => {
                                     console.log("sending getting message", temp);
                                     switch (temp.type) {
                                         case 'meta': {
@@ -687,7 +687,7 @@ class Room extends React.Component {
                                 this.dataConnection.on('data', (data) => {
                                     // data.map((temp) => console.log('Received', temp));
                                     // TODO: when message received, add to personal message list
-                                    data.map((temp) => {
+                                    data.forEach((temp) => {
                                         switch (temp.type) {
                                             case 'meta': {
                                                 // update score
