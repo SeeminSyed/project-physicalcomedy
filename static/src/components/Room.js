@@ -12,7 +12,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Peer from 'peerjs';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Card from 'react-bootstrap/Card';
-import Words from './Words';
+import Spinner from 'react-bootstrap/Spinner'
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
@@ -1169,81 +1169,109 @@ class Room extends React.Component {
     }
 
     render() {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: '100vh',
-                }}>
-                <GameHeader
-                    id={this.state.localId}
-                    hosting={this.state.hosting}
-                    onClick={(this.state.hosting ? this.endRoom : this.endCall)}
-                />
-                <div id='body' className='bg-light page'
+        console.log('this.props.modelLoaded', this.state.modelLoaded);
+        if (this.state.modelLoaded) {
+            return (
+                <div
                     style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        flex: 1,
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
                     }}>
-                    <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
-                        <ChatBox
-                            // TODO: When peerlist update, send message to chat
-                            id={this.state.localId}
-                            onClick={this.verifyComment}
-                            messages={this.state.messages}
-                        />
-                    </div>
-                    <div id='right' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
-                        <div id='top' style={{ display: 'flex', height: '100%', flexBasis: '80%', maxWidth: '100%', }}>
-                            <Streams
-                                localId={this.state.localId}
-                                localName={this.state.localName}
-                                localStream={this.state.localStream}
-                                myPeers={this.myPeers}
-                            />
-                        </div>
-                        <div id='bottom' style={{
-                            display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
-                            flexBasis: '20%', width: '100%', height: '100%',
+                    <GameHeader
+                        id={this.state.localId}
+                        hosting={this.state.hosting}
+                        onClick={(this.state.hosting ? this.endRoom : this.endCall)}
+                    />
+                    <div id='body' className='bg-light page'
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            flex: 1,
+                            paddingTop: '10px',
+                            paddingBottom: '10px',
                         }}>
-                            <CallOptions
-                                hosting={this.state.hosting}
-                                endRoom={this.endRoom}
-                                endCall={this.endCall}
-                                muted={this.state.muted}
-                                toggleMute={this.toggleMute}
-                                camOn={this.state.camOn}
-                                toggleCam={this.toggleCam}
+                        <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
+                            <ChatBox
+                                // TODO: When peerlist update, send message to chat
+                                id={this.state.localId}
+                                onClick={this.verifyComment}
+                                messages={this.state.messages}
                             />
-                            <Card>
-                                <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
-                                    <div>
-                                        My Score: {this.myScore.toString()}
-                                    </div>
-                                    <div>
-                                        Opponent's Score: {this.state.otherScore}
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                            <GameOptions
-                                paintOn={this.state.paintOn}
-                                toggleDraw={this.toggleDraw}
-                                currentWord={this.state.currentWord}
-                                myTurn={this.state.myTurn}
-                                newWord={this.newWord}
-                            />
+                        </div>
+                        <div id='right' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
+                            <div id='top' style={{ display: 'flex', height: '100%', flexBasis: '80%', maxWidth: '100%', }}>
+                                <Streams
+                                    localId={this.state.localId}
+                                    localName={this.state.localName}
+                                    localStream={this.state.localStream}
+                                    myPeers={this.myPeers}
+                                />
+                            </div>
+                            <div id='bottom' style={{
+                                display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
+                                flexBasis: '20%', width: '100%', height: '100%',
+                            }}>
+                                <CallOptions
+                                    hosting={this.state.hosting}
+                                    endRoom={this.endRoom}
+                                    endCall={this.endCall}
+                                    muted={this.state.muted}
+                                    toggleMute={this.toggleMute}
+                                    camOn={this.state.camOn}
+                                    toggleCam={this.toggleCam}
+                                />
+                                <Card>
+                                    <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
+                                        <div>
+                                            My Score: {this.myScore.toString()}
+                                        </div>
+                                        <div>
+                                            Opponent's Score: {this.state.otherScore}
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                                <GameOptions
+                                    paintOn={this.state.paintOn}
+                                    toggleDraw={this.toggleDraw}
+                                    currentWord={this.state.currentWord}
+                                    myTurn={this.state.myTurn}
+                                    newWord={this.newWord}
+                                />
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <Footer></Footer>
-            </ div>
-        );
+                    <Footer></Footer>
+                </ div >
+            );
+        } else {
+            return (
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
+                    }}>
+                    <GameHeader
+                        id={this.state.localId}
+                        hosting={this.state.hosting}
+                        onClick={(this.state.hosting ? this.endRoom : this.endCall)}
+                    />
+                    < div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        padding: "259px",
+                        flex: 1,
+                    }}>
+                        <Spinner animation="grow" variant="info" />
+                    </div>
+                    <Footer></Footer>
+                </ div >
+            );
+        }
     }
 }
 
