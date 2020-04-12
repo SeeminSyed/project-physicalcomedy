@@ -442,6 +442,7 @@ class Room extends React.Component {
             currentWord: '',
             otherScore: '0',
             myScore: 0,
+            HostEnd: false,
 
         };
 
@@ -457,8 +458,6 @@ class Room extends React.Component {
         this.nypos = 360 / 2;
 
         this.backlogMessages = [];
-
-        this.HostEnd = false;
 
         // Function binding
         this.adminMessage = this.adminMessage.bind(this);
@@ -603,9 +602,7 @@ class Room extends React.Component {
                             });
                             // Handle when a remote peer ends the call
                             this.mediaConnection.on('close', () => {
-                                if (!this.HostEnd) alert("Peer has left the call!");
-                                if (this.dataConnection) this.dataConnection.close();
-                                window.location.replace('../');
+                                alert("Peer has left the call!");
                             });
                         } else {
                             this.mediaConnection.close();
@@ -685,7 +682,7 @@ class Room extends React.Component {
 
                                     // Handle when the call finishes
                                     this.mediaConnection.on('close', () => {
-                                        if (this.HostEnd) alert('The host has ended the call!');
+                                        if (this.state.HostEnd) alert('The host has ended the call!');
                                         if (this.dataConnection) this.dataConnection.close();
                                         window.location.replace('../');
                                     });
@@ -704,7 +701,6 @@ class Room extends React.Component {
     }
 
     endRoom() {
-        this.HostEnd = true;
         // end connections
         if (this.dataConnection) {
             this.dataConnection.close();
@@ -728,7 +724,9 @@ class Room extends React.Component {
     }
 
     endCall() {
-        this.HostEnd = true;
+        this.setState({
+            HostEnd: true,
+        });
         // end connections
         if (this.dataConnection) {
             this.dataConnection.close();
