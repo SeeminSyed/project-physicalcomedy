@@ -124,7 +124,7 @@ class GameHeader extends React.Component {
                                 value={this.props.id}
                                 onClick={this.ctrlC.bind(this)}
                             />
-                            <text id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
+                            <div id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </div>
                             <OverlayTrigger
                                 delay={{ show: 0, hide: 400 }}
                                 placement='bottom'
@@ -200,17 +200,17 @@ class ChatBox extends React.Component {
                                         switch (msg.type) {
                                             case 'admin':
                                                 return (<li className='list-group list-group-flush' key={msg.name}>
-                                                    <text style={{ color: '#808080' }}> >>> {msg.text} </text>
+                                                    <div style={{ color: '#808080' }}> >>> {msg.text} </div>
                                                 </li>)
                                             default:
 
                                                 if (msg.id === this.props.id) {
                                                     return (<li className='list-group list-group-flush' key={msg.name}>
-                                                        <text style={{ color: '#17b87e' }}> <strong>{msg.name}</strong>: {msg.text} </text>
+                                                        <div style={{ color: '#17b87e' }}> <strong>{msg.name}</strong>: {msg.text} </div>
                                                     </li>)
                                                 }
                                                 return (<li className='list-group list-group-flush' key={msg.name}>
-                                                    <text style={{ color: '#17a2b8' }}> <strong>{msg.name}</strong>: {msg.text} </text>
+                                                    <div style={{ color: '#17a2b8' }}> <strong>{msg.name}</strong>: {msg.text} </div>
                                                 </li>)
                                         }
                                     }
@@ -441,10 +441,10 @@ class Room extends React.Component {
             myTurn: true,
             currentWord: '',
             otherScore: '0',
+            myScore: 0,
 
         };
 
-        this.myScore = 0;
         // Objects used by composite components
         this.mediaConnection = null;
         this.dataConnection = null;
@@ -546,10 +546,11 @@ class Room extends React.Component {
                                             break;
                                         }
                                         case 'words': {
-                                            // update score
+                                            // update words
                                             this.setState({
                                                 wordsArray: temp.text,
                                                 currentWord: temp.word,
+                                                winningScore: temp.winningScore,
                                             });
 
                                             break;
@@ -634,10 +635,11 @@ class Room extends React.Component {
                                                 break;
                                             }
                                             case 'words': {
-                                                // update score
+                                                // update words
                                                 this.setState({
                                                     wordsArray: temp.text,
                                                     currentWord: temp.word,
+                                                    winningScore: temp.winningScore,
                                                 });
 
                                                 break;
@@ -921,7 +923,7 @@ class Room extends React.Component {
             }, () => this.sendWords());
 
             // if my score >= winningScore
-            if (this.myScore >= this.state.winningScore) {
+            if (this.state.myScore >= this.state.winningScore) {
                 this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
             }
         } else {
@@ -930,20 +932,21 @@ class Room extends React.Component {
     }
 
     updateScore() {
+        let tempScore = this.state.myScore;
+        tempScore++;
         this.setState({
-            myScore: this.myScore++,
+            myScore: tempScore,
             myTurn: true,
+        }, () => {
+            let temp = { id: '', name: '', type: 'meta', text: this.state.myScore.toString() };
+            if (this.dataConnection) {
+                if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+                this.dataConnection.send([temp]);
+                this.backlogMessages = [];
+            } else {
+                this.backlogMessages.push(temp);
+            }
         });
-        this.myScore = this.myScore++;
-
-        let temp = { id: '', name: '', type: 'meta', text: this.myScore.toString() };
-        if (this.dataConnection) {
-            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
-            this.dataConnection.send([temp]);
-            this.backlogMessages = [];
-        } else {
-            this.backlogMessages.push(temp);
-        }
     }
 
     sendWords() {
@@ -951,6 +954,7 @@ class Room extends React.Component {
             id: '', name: '', type: 'words',
             word: this.state.currentWord,
             text: this.state.wordsArray,
+            winningScore: this.state.winningScore
         };
 
         if (this.dataConnection) {
@@ -1096,7 +1100,7 @@ class Room extends React.Component {
                                 <Card>
                                     <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
                                         <div>
-                                            My Score: {this.myScore.toString()}
+                                            My Score: {this.state.myScore.toString()}
                                         </div>
                                         <div>
                                             Opponent's Score: {this.state.otherScore}
