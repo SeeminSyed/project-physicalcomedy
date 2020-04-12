@@ -133,7 +133,7 @@ class GameHeader extends React.Component {
                             />
                             <text id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
                             <OverlayTrigger
-                                delay={{ show: 250, hide: 400 }}
+                                delay={{ show: 0, hide: 400 }}
                                 placement='bottom'
                                 overlay={
                                     <Tooltip>
@@ -424,12 +424,12 @@ class GameOptions extends React.Component {
         } else {
             return (
                 <div>
-                    <OverlayTrigger
+                    {/* <OverlayTrigger
                         placement='top'
                         delay={{ show: 250, hide: 400 }}
                         overlay={<Tooltip>Give up?</Tooltip>}>
                         <Button variant='outline-info' id='wordbutton' onClick={this.props.skipGuess} size='lg' ><MdCompareArrows /></Button>
-                    </OverlayTrigger>
+                    </OverlayTrigger> */}
                 </div>
             );
         }
@@ -522,7 +522,7 @@ class Room extends React.Component {
         this.toggleCam = this.toggleCam.bind(this);
         this.toggleDraw = this.toggleDraw.bind(this);
         this.newWord = this.newWord.bind(this);
-        this.sendWordsCriteria = this.sendWordsCriteria.bind(this);
+        this.sendWords = this.sendWords.bind(this);
         this.getWordsArray = this.getWordsArray.bind(this);
 
 
@@ -601,6 +601,15 @@ class Room extends React.Component {
                                             });
                                             break;
                                         }
+                                        case 'words': {
+                                            // update score
+                                            this.setState({
+                                                wordsArray: temp.text,
+                                                currentWord: temp.word,
+                                            });
+                                            console.log('this.state.currentWord', this.state.currentWord);
+                                            break;
+                                        }
                                         default: {
                                             let tempMessages = this.state.messages;
                                             tempMessages.push(temp);
@@ -614,7 +623,7 @@ class Room extends React.Component {
                             });
                             // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
                             // on connection, send wordlist to other user
-                            this.sendWordsCriteria();
+                            this.sendWords();
                             if (this.state.myTurn) this.adminMessage("host, it's your turn.");
                         });
                         // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
@@ -691,12 +700,10 @@ class Room extends React.Component {
                                             case 'words': {
                                                 // update score
                                                 this.setState({
-                                                    starterWord: temp.text.starterWord,
-                                                    category: temp.text.category,
-                                                    winningScore: temp.text.winningScore,
-                                                    currentWord: temp.text.currentWord,
+                                                    wordsArray: temp.text,
+                                                    currentWord: temp.word,
                                                 });
-                                                this.getWordsArray();
+                                                console.log('this.state.currentWord', this.state.currentWord);
                                                 break;
                                             }
                                             default: {
@@ -1016,6 +1023,7 @@ class Room extends React.Component {
     }
 
     verifyComment(message) {
+        console.log('this.state.currentWord', this.state.currentWord);
         // if message.includes('\guess'), correct and my turn
         if (message.includes('\\guess') && message.includes(this.state.currentWord) && !this.state.myTurn) {
             // sendMessage
@@ -1024,6 +1032,13 @@ class Room extends React.Component {
             this.adminMessage("You're right, " + (this.state.hosting ? 'host' : 'peer') + "! It's your turn now~");
             // updateScore
             this.updateScore();
+            // update word list
+            let tempWords = this.state.wordsArray;
+            let tempWord = tempWords.pop();
+            this.setState({
+                wordsArray: tempWords,
+                currentWord: tempWord,
+            }, () => this.sendWords());
             // if my score >= winningScore
             console.log("myScore/winningScore", this.myScore.toString() + "/" + this.state.winningScore.toString());
             if (this.myScore >= this.state.winningScore) {
@@ -1055,15 +1070,11 @@ class Room extends React.Component {
         }
     }
 
-    sendWordsCriteria() {
+    sendWords() {
         let temp = {
             id: '', name: '', type: 'words',
-            text: {
-                starterWord: this.state.starterWord,
-                category: this.state.category,
-                winningScore: this.state.winningScore,
-                currentWord: this.state.currentWord,
-            }
+            word: this.state.currentWord,
+            text: this.state.wordsArray,
         };
 
         if (this.dataConnection) {
@@ -1126,7 +1137,9 @@ class Room extends React.Component {
                 this.setState({
                     wordsArray: data,
                     currentWord: newWord
-                })
+                }, () => {
+                    if (this.dataConnection) this.sendWords();
+                });
             });
     }
 
@@ -1138,8 +1151,9 @@ class Room extends React.Component {
         if (words && words.length !== 0) {
             newWord = words.pop();
             this.setState({
-                currentWord: newWord
-            });
+                currentWord: newWord,
+                wordsArray: words,
+            }, () => this.sendWords());
         } else {
             this.getWordsArray();
         }
