@@ -11,6 +11,7 @@ const header = {
 const text = {
     flexDirection: 'column',
     color: 'white',
+    padding: '0px',
 };
 
 export default class Header extends React.Component {
