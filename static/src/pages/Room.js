@@ -250,12 +250,6 @@ class ChatBox extends React.Component {
     }
 }
 
-function PeerVideo(props) {
-    return (
-        <video id={props.id} width='100' height='100' autoPlay='autoplay' className='mx-auto d-block' style={{ margin: '10px 10px', width: 'auto', }} /></video >
-    );
-}
-
 class Streams extends React.Component {
     constructor(props) {
         super(props);
@@ -268,14 +262,6 @@ class Streams extends React.Component {
             deafen: props.deafen,
             myPeers: props.myPeers
         };
-    }
-
-    renderPeerVideo(peerName) {
-        return (
-            <PeerVideo
-                id={peerName}
-            />
-        );
     }
 
     render() {
@@ -545,7 +531,7 @@ class Room extends React.Component {
                         this.dataConnection.on('open', () => {
                             // Emitted when data is received from the remote peer.
                             this.dataConnection.on('data', (data) => {
-                                data.map((temp) => {
+                                data.forEach((temp) => {
 
                                     switch (temp.type) {
                                         case 'meta': {
@@ -632,7 +618,7 @@ class Room extends React.Component {
                             this.dataConnection = this.peer.connect(this.state.hostId, 'hi');
                             this.dataConnection.on('open', () => {
                                 this.dataConnection.on('data', (data) => {
-                                    data.map((temp) => {
+                                    data.forEach((temp) => {
                                         switch (temp.type) {
                                             case 'meta': {
                                                 // update score
