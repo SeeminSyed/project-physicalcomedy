@@ -270,7 +270,7 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center',
                 height: 'inherit',
             }}>
-                <video id='my-camera' width='480' height='360' autoPlay='autoplay'></video>
+                <video id='my-camera' width='480' height='360' autoPlay='autoplay' muted={true}></video>
                 <canvas id='feed'></canvas>
                 <video id='peer-camera' width='480' height='360' autoPlay='autoplay' style={{ display: 'none', }} ></video>
             </Container>
@@ -424,7 +424,7 @@ class Room extends React.Component {
 
             // buttons
             camOn: false,
-            muted: true,
+            muted: false,
             paintOn: false,
 
             // lists
@@ -743,6 +743,9 @@ class Room extends React.Component {
 
         video.style.display = 'none';
         this.canvasStream = feed.captureStream();
+
+        let track = this.localStream.getAudioTracks()[0];
+        this.canvasStream.addTrack(track);
 
         context.drawImage(video, 0, 0, feed.width, feed.height);
 

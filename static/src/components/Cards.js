@@ -26,7 +26,7 @@ class CardOneForm extends React.Component {
 
         this.enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
         this.wordCategory = "You will get words based on the category you choose.";
-        this.score = "Please enter a value greater than or equal to 5. Player who reaches this score first wins!";
+        this.score = "Please enter a value greater than or equal to 1. Player who reaches this score first wins!";
     }
 
 
