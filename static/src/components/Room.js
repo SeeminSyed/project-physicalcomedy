@@ -12,7 +12,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Peer from 'peerjs';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Card from 'react-bootstrap/Card';
-import Words from './Words';
+import Spinner from 'react-bootstrap/Spinner'
 
 // https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js
 // https://www.andismith.com/blogs/2012/07/extending-getusermedia/
@@ -63,8 +63,8 @@ function HelpModal() {
                         <strong>Getting a New Word:</strong> To get a new word, click on the refresh icon <MdRefresh />. A new word
             will be displayed.
             <p></p>
-                        <strong>Making a Guess:</strong> To guess a word, type '\guess:[your guess]' into the text chat. If your guess
-            is correct you will receive a point. Example: '\guess: trunk' can something you type into your
+                        <strong>Making a Guess:</strong> To guess a word, type '\guess [your guess]' into the text chat. If your guess
+            is correct you will receive a point. Example: '\guess trunk' can something you type into your
             text chat, where 'trunk' is your guess.
             </p>
                 </Modal.Body>
@@ -81,7 +81,7 @@ function HelpModal() {
 class GameHeader extends React.Component {
     constructor() {
         super();
-        this.state = {copyText: "Copy to Clipboard."}
+        this.state = { copyText: "Copy to Clipboard." }
     }
 
     ctrlC(e) {
@@ -90,7 +90,7 @@ class GameHeader extends React.Component {
         // copy room code to clipboard
         this.textArea.select();
         document.execCommand('copy');
-        this.setState({ copyText: "Copied!"})
+        this.setState({ copyText: "Copied!" })
         // e.target.focus();
     }
 
@@ -131,13 +131,9 @@ class GameHeader extends React.Component {
                                 value={this.props.id}
                                 onClick={this.ctrlC.bind(this)}
                             />
-<<<<<<< HEAD
-                            <text id="roomId" style={{ fontSize: '80%', alignItems:'center' }} >Room Code: {this.props.id} </text>
-=======
                             <text id='roomId' style={{ fontSize: '80%' }} >Room Code: {this.props.id} </text>
->>>>>>> 461b89aa4d3d0afbf193435f13da97a7d2731618
                             <OverlayTrigger
-                                delay={{ show: 250, hide: 400 }}
+                                delay={{ show: 0, hide: 400 }}
                                 placement='bottom'
                                 overlay={
                                     <Tooltip>
@@ -303,9 +299,9 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center', /*alignItems: 'center',*/
                 height: 'inherit',
             }}>
-                <video id='my-camera' width='300' height='225' autoPlay='autoplay' muted={true} /*className='mx-auto d-block'*/></video>
+                <video id='my-camera' width='480' height='360' autoPlay='autoplay' muted={true} ></video>
                 <canvas id='feed' ></canvas>
-                <video id='peer-camera' width='300' height='225' autoPlay='autoplay' style={{ display: 'none', }} /*className='mx-auto d-block'*/></video>
+                <video id='peer-camera' width='480' height='360' autoPlay='autoplay' style={{ display: 'none', }} ></video>
                 {/* <div id='peers'>
                     {this.state.myPeers.map((peer) => (
                         <div key={peer.id}>
@@ -416,12 +412,25 @@ class GameOptions extends React.Component {
                         overlay={<Tooltip>Get Another Word</Tooltip>}>
                         <Button variant='outline-info' id='wordbutton' onClick={this.props.newWord} size='lg' ><MdRefresh /></Button>
                     </OverlayTrigger>
-                    <div></div>
-                </div>
+                    <Card>
+                        <Card.Body style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
+                            <div>
+                                {this.props.currentWord}
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </div >
             );
         } else {
             return (
-                <div></div>
+                <div>
+                    {/* <OverlayTrigger
+                        placement='top'
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={<Tooltip>Give up?</Tooltip>}>
+                        <Button variant='outline-info' id='wordbutton' onClick={this.props.skipGuess} size='lg' ><MdCompareArrows /></Button>
+                    </OverlayTrigger> */}
+                </div>
             );
         }
     }
@@ -440,8 +449,7 @@ class Room extends React.Component {
             // from homepage
             starterWord: '',
             category: '',
-            wordsArray: [], // empty words array
-            currWord: '', // current word on the user's screen
+            wordsArray: [],
             winningScore: 0,
             hostId: '',
 
@@ -468,18 +476,18 @@ class Room extends React.Component {
                     id: '',
                     name: '',
                     type: 'admin',
-                    text: 'Write your guess by typing \guess: and the word you guess or just send messages to your mates!',
+                    text: 'Write your guess by typing \\guess and the word you guess or just send messages to your mates!',
                 }
             ],
 
             // Game
             myTurn: true,
             currentWord: '',
-            myScore: 0,
-            otherScore: null,
+            otherScore: '0',
 
         };
 
+        this.myScore = 0;
         // Objects used by composite components
         this.mediaConnection = null;
         this.dataConnection = null;
@@ -512,8 +520,11 @@ class Room extends React.Component {
         this.sendMessage = this.sendMessage.bind(this);
         this.toggleMute = this.toggleMute.bind(this);
         this.toggleCam = this.toggleCam.bind(this);
-        this.newWord = this.newWord.bind(this);
         this.toggleDraw = this.toggleDraw.bind(this);
+        this.newWord = this.newWord.bind(this);
+        this.sendWords = this.sendWords.bind(this);
+        this.getWordsArray = this.getWordsArray.bind(this);
+
 
         // create peer TODO: user proper peer server
         this.peer = new Peer();
@@ -562,6 +573,7 @@ class Room extends React.Component {
                         category: this.props.location.state.data.category,
                         winningScore: parseInt(this.props.location.state.data.score),
                     });
+                    this.getWordsArray();
 
                     // ask for camera
                     if (!this.state.camOn) {
@@ -578,7 +590,8 @@ class Room extends React.Component {
                             this.dataConnection.on('data', (data) => {
                                 // data.map((temp) => console.log('Received', temp));
                                 // TODO: when message received, add to personal message list
-                                data.map((temp) => {
+                                data.forEach((temp) => {
+                                    console.log("sending getting message", temp);
                                     switch (temp.type) {
                                         case 'meta': {
                                             // update score
@@ -586,6 +599,15 @@ class Room extends React.Component {
                                                 otherScore: temp.text,
                                                 myTurn: false,
                                             });
+                                            break;
+                                        }
+                                        case 'words': {
+                                            // update score
+                                            this.setState({
+                                                wordsArray: temp.text,
+                                                currentWord: temp.word,
+                                            });
+                                            console.log('this.state.currentWord', this.state.currentWord);
                                             break;
                                         }
                                         default: {
@@ -600,8 +622,8 @@ class Room extends React.Component {
                                 });
                             });
                             // Send messages [is serialized by BinaryPack by default and sent to the remote peer]
-                            // on connection, send list of messages to user
-                            // this.dataConnection.send('Hello!');
+                            // on connection, send wordlist to other user
+                            this.sendWords();
                             if (this.state.myTurn) this.adminMessage("host, it's your turn.");
                         });
                         // Closes the data connection gracefully, cleaning up underlying DataChannels and PeerConnections.
@@ -665,7 +687,7 @@ class Room extends React.Component {
                                 this.dataConnection.on('data', (data) => {
                                     // data.map((temp) => console.log('Received', temp));
                                     // TODO: when message received, add to personal message list
-                                    data.map((temp) => {
+                                    data.forEach((temp) => {
                                         switch (temp.type) {
                                             case 'meta': {
                                                 // update score
@@ -673,6 +695,15 @@ class Room extends React.Component {
                                                     otherScore: temp.text,
                                                     myTurn: false,
                                                 });
+                                                break;
+                                            }
+                                            case 'words': {
+                                                // update score
+                                                this.setState({
+                                                    wordsArray: temp.text,
+                                                    currentWord: temp.word,
+                                                });
+                                                console.log('this.state.currentWord', this.state.currentWord);
                                                 break;
                                             }
                                             default: {
@@ -783,9 +814,8 @@ class Room extends React.Component {
         // feed.width = video.width;
         // feed.height = video.height;
 
-        // TODO: dimensions
-        feed.width = 1280 / 2;
-        feed.height = 720 / 2;
+        feed.width = 480;
+        feed.height = 360;
 
         video.style.display = 'none';
         this.canvasStream = feed.captureStream();
@@ -992,18 +1022,27 @@ class Room extends React.Component {
     }
 
     verifyComment(message) {
-        // if message.includes('\guess:'), correct and my turn
-        if (message.includes('\\guess:') && message.includes(this.state.currentWord) && this.state.myTurn) {
+        console.log('this.state.currentWord', this.state.currentWord);
+        // if message.includes('\guess'), correct and my turn
+        if (message.includes('\\guess') && message.includes(this.state.currentWord) && !this.state.myTurn) {
             // sendMessage
             this.sendMessage(message);
             // adminMessage
-            this.adminMessage("You're right, ", (this.state.hosting ? 'host' : 'peer'), "! It's your turn now~");
+            this.adminMessage("You're right, " + (this.state.hosting ? 'host' : 'peer') + "! It's your turn now~");
             // updateScore
             this.updateScore();
+            // update word list
+            let tempWords = this.state.wordsArray;
+            let tempWord = tempWords.pop();
+            this.setState({
+                wordsArray: tempWords,
+                currentWord: tempWord,
+            }, () => this.sendWords());
             // if my score >= winningScore
-            if (this.state.myScore >= this.state.winningScore) {
+            console.log("myScore/winningScore", this.myScore.toString() + "/" + this.state.winningScore.toString());
+            if (this.myScore >= this.state.winningScore) {
                 // (this.state.hosting ? 'host' : 'peer') won! But you can keep playing~
-                this.adminMessage((this.state.hosting ? 'host' : 'peer'), ' won! But you can keep playing~');
+                this.adminMessage((this.state.hosting ? 'host' : 'peer') + ' won! But you can keep playing~');
             }
         } else {
             this.sendMessage(message);
@@ -1011,13 +1050,31 @@ class Room extends React.Component {
     }
 
     updateScore() {
-        let ms = this.state.myScore + 1;
+        console.log("myScore before", this.myScore.toString());
+        let ms = this.myScore;
+        ms++;
         this.setState({
-            myScore: ms,
+            myScore: this.myScore++,
             myTurn: true,
         });
+        this.myScore = this.myScore++;
+        console.log("myScore after", this.myScore.toString());
+        let temp = { id: '', name: '', type: 'meta', text: this.myScore.toString() };
+        if (this.dataConnection) {
+            if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
+            this.dataConnection.send([temp]);
+            this.backlogMessages = [];
+        } else {
+            this.backlogMessages.push(temp);
+        }
+    }
 
-        let temp = { id: '', name: '', type: 'meta', text: this.state.myscore };
+    sendWords() {
+        let temp = {
+            id: '', name: '', type: 'words',
+            word: this.state.currentWord,
+            text: this.state.wordsArray,
+        };
 
         if (this.dataConnection) {
             if (this.backlogMessages) this.dataConnection.send(this.backlogMessages);
@@ -1069,25 +1126,37 @@ class Room extends React.Component {
 
     getWordsArray() {
         // /words/:type/:word
+        console.log('/words/${this.state.category}/${this.state.starterWord}', `/words/${this.state.category}/${this.state.starterWord}`);
         fetch(`/words/${this.state.category}/${this.state.starterWord}`)
-            .then((res) => {console.log(res); res.json();})
-            .then((wordsResponse) => this.setState({ wordsArray: wordsResponse }));
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                let newWord = data.pop();
+                this.setState({
+                    wordsArray: data,
+                    currentWord: newWord
+                }, () => {
+                    if (this.dataConnection) this.sendWords();
+                });
+            });
     }
 
     newWord() {
         // onClick function for word
         let words = this.state.wordsArray;
-        console.log(words);
+        console.log('words', words);
         let newWord;
-        if(words === null && words.length !== 0){
+        if (words && words.length !== 0) {
             newWord = words.pop();
             this.setState({
-                currWord: newWord
-            });
+                currentWord: newWord,
+                wordsArray: words,
+            }, () => this.sendWords());
         } else {
             this.getWordsArray();
         }
-        console.log(newWord);
+        console.log('newWord', newWord);
     }
 
     toggleMute() {
@@ -1099,87 +1168,109 @@ class Room extends React.Component {
     }
 
     render() {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: '100vh',
-                }}>
-                <GameHeader
-                    id={this.state.localId}
-                    hosting={this.state.hosting}
-                    onClick={(this.state.hosting ? this.endRoom : this.endCall)}
-                />
-                <div id='body' className='bg-light page'
+        console.log('this.props.modelLoaded', this.state.modelLoaded);
+        if (this.state.modelLoaded) {
+            return (
+                <div
                     style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        flex: 1,
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
                     }}>
-                    <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
-                        <ChatBox
-                            // TODO: When peerlist update, send message to chat
-                            id={this.state.localId}
-                            onClick={this.verifyComment}
-                            messages={this.state.messages}
-                        />
-                    </div>
-                    <div id='right' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
-                        <div id='top' style={{ display: 'flex', height: '100%', flexBasis: '80%', maxWidth: '100%', }}>
-                            <Streams
-                                localId={this.state.localId}
-                                localName={this.state.localName}
-                                localStream={this.state.localStream}
-                                myPeers={this.myPeers}
-                            />
-                        </div>
-                        <div id='bottom' style={{
-                            display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
-                            flexBasis: '20%', width: '100%', height: '100%',
+                    <GameHeader
+                        id={this.state.localId}
+                        hosting={this.state.hosting}
+                        onClick={(this.state.hosting ? this.endRoom : this.endCall)}
+                    />
+                    <div id='body' className='bg-light page'
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            flex: 1,
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
                         }}>
-                            <CallOptions
-                                hosting={this.state.hosting}
-                                endRoom={this.endRoom}
-                                endCall={this.endCall}
-                                muted={this.state.muted}
-                                toggleMute={this.toggleMute}
-                                camOn={this.state.camOn}
-                                toggleCam={this.toggleCam}
+                        <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
+                            <ChatBox
+                                // TODO: When peerlist update, send message to chat
+                                id={this.state.localId}
+                                onClick={this.verifyComment}
+                                messages={this.state.messages}
                             />
-                            <Card>
-                                <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
-                                    <div>
-                                        My Score: {this.state.myScore}
-                                    </div>
-                                    <div>
-                                        Opponent's Score: {this.state.otherScore}
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                            <GameOptions
-                                paintOn={this.state.paintOn}
-                                currentWord={this.state.currentWord}
-                                myTurn={this.state.myTurn}
-                                toggleDraw={this.toggleDraw}
-<<<<<<< HEAD
-                            >
-                                {/* <Words category={this.state.category} word={this.state.starterWord}/> */}
-                            </GameOptions>
-=======
-                                newWord={this.newWord}
-                            />
->>>>>>> 461b89aa4d3d0afbf193435f13da97a7d2731618
+                        </div>
+                        <div id='right' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexBasis: '80%', maxWidth: '80%' }}>
+                            <div id='top' style={{ display: 'flex', height: '100%', flexBasis: '80%', maxWidth: '100%', }}>
+                                <Streams
+                                    localId={this.state.localId}
+                                    localName={this.state.localName}
+                                    localStream={this.state.localStream}
+                                    myPeers={this.myPeers}
+                                />
+                            </div>
+                            <div id='bottom' style={{
+                                display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', justifyItems: 'center', alignItems: 'center',
+                                flexBasis: '20%', width: '100%', height: '100%',
+                            }}>
+                                <CallOptions
+                                    hosting={this.state.hosting}
+                                    endRoom={this.endRoom}
+                                    endCall={this.endCall}
+                                    muted={this.state.muted}
+                                    toggleMute={this.toggleMute}
+                                    camOn={this.state.camOn}
+                                    toggleCam={this.toggleCam}
+                                />
+                                <Card>
+                                    <Card.Body id='score' style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'column', padding: '10px', }}>
+                                        <div>
+                                            My Score: {this.myScore.toString()}
+                                        </div>
+                                        <div>
+                                            Opponent's Score: {this.state.otherScore}
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                                <GameOptions
+                                    paintOn={this.state.paintOn}
+                                    toggleDraw={this.toggleDraw}
+                                    currentWord={this.state.currentWord}
+                                    myTurn={this.state.myTurn}
+                                    newWord={this.newWord}
+                                />
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <Footer></Footer>
-            </ div>
-        );
+                    <Footer></Footer>
+                </ div >
+            );
+        } else {
+            return (
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minHeight: '100vh',
+                    }}>
+                    <GameHeader
+                        id={this.state.localId}
+                        hosting={this.state.hosting}
+                        onClick={(this.state.hosting ? this.endRoom : this.endCall)}
+                    />
+                    < div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexDirection: "column",
+                        padding: "259px",
+                        flex: 1,
+                    }}>
+                        <Spinner animation="grow" variant="info" />
+                    </div>
+                    <Footer></Footer>
+                </ div >
+            );
+        }
     }
 }
 
