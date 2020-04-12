@@ -15,14 +15,13 @@ class CardOneForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirect: false
+            redirect: false,
+            validate: false
         };
 
         this.wordInput = React.createRef();
         this.categoryInput = React.createRef();
         this.scoreInput = React.createRef();
-
-        this.validate = false;
 
         this.enterWord = "You will be provided with words similar to the one you enter. Example, if you enter 'tree', a possible suggestion can be 'trunk'.";
         this.wordCategory = "You will get words based on the category you choose.";
@@ -38,11 +37,14 @@ class CardOneForm extends React.Component {
             event.stopPropagation();
         } else {
             this.setState({
-                redirect: true
+                redirect: true,
+                validate: true
             });
         }
 
-        this.validate = true;
+        this.setState({
+            validate: true
+        });
     }
 
     render() {
@@ -59,7 +61,7 @@ class CardOneForm extends React.Component {
             }} />;
         }
         return (
-            <Form noValidate validated={this.validate} onSubmit={this.handleSubmit.bind(this)}>
+            <Form noValidate validated={this.state.validate} onSubmit={this.handleSubmit.bind(this)}>
                 {/* enter a word */}
                 <Form.Group as={Col} controlId="enter-word">
                     <Form.Label sm="10">Enter a word: <Instructions text={this.enterWord} /> </Form.Label>
@@ -131,12 +133,11 @@ class CardTwoForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            redirect: false
+            redirect: false,
+            validate: false
         };
 
         this.codeInput = React.createRef();
-
-        this.validate = false;
     }
 
     handleSubmit(event) {
@@ -151,7 +152,9 @@ class CardTwoForm extends React.Component {
             });
         }
 
-        this.validate = true;
+        this.setState({
+            validate: true
+        });
     }
 
     render() {
@@ -166,7 +169,7 @@ class CardTwoForm extends React.Component {
             }} />;
         }
         return (
-            <Form noValidate validated={this.validate} onSubmit={this.handleSubmit.bind(this)}>
+            <Form noValidate validated={this.state.validate} onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Group as={Col} controlId="enter-word">
                     <Form.Label sm="10">Enter a Code: </Form.Label>
                     <Col sm="10">
