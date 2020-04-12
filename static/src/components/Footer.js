@@ -21,10 +21,10 @@ export default class Footer extends React.Component {
     render() {
         return (
             <footer style={footer}>
-                <text style={text}>
+                <div style={text}>
                     Find the source code at <a rel="noopener noreferrer" target="_blank" href="https://github.com/UTSCC09/project-physicalcomedy">Github</a> |
                     Credits at <a href="/credits"> Credits</a>
-                </text>
+                </div>
             </footer>
         )
     }

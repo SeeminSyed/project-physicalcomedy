@@ -105,7 +105,7 @@ class GameHeader extends React.Component {
                 width: '100%',
             }}>
                 {/* Title */}
-                <text><span role='img' aria-label='emoji'>🎉</span> Physical Comedy </text>
+                <div><span role='img' aria-label='emoji'>🎉</span> Physical Comedy </div>
                 {/* Room Code */}
                 {
                     this.props.hosting ?

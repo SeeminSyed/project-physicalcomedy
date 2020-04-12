@@ -10,10 +10,6 @@ const datamuse = require('datamuse');
 // serve React files
 app.use(express.static(path.join(__dirname, 'static/build')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/static/build/index.html'));
-  });
-
 function getCode(type) {
     let code = '';
     switch (type) {
@@ -55,6 +51,10 @@ app.get('/words/:type/:word', function (req, res, next) {
         let words = populateArray(json);
         res.json(words);
     });
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/static/build/index.html'));
 });
 
 const http = require('http');
