@@ -270,9 +270,9 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center',
                 height: 'inherit',
             }}>
-                <video id='my-camera' width='300' height='225' autoPlay='autoplay' muted={true} ></video>
+                <video id='my-camera' width='480' height='360' autoPlay='autoplay' muted={true} ></video>
                 <canvas id='feed' ></canvas>
-                <video id='peer-camera' width='300' height='225' autoPlay='autoplay' style={{ display: 'none', }} ></video>
+                <video id='peer-camera' width='480' height='360' autoPlay='autoplay' style={{ display: 'none', }} ></video>
             </Container>
         );
     }
@@ -614,7 +614,6 @@ class Room extends React.Component {
                             let video = document.getElementById('peer-camera');
                             video.style.display = 'inline-block';
 
-                            // make connection to another peer TODO: add metadata
                             this.dataConnection = this.peer.connect(this.state.hostId, 'hi');
                             this.dataConnection.on('open', () => {
                                 this.dataConnection.on('data', (data) => {
@@ -739,9 +738,8 @@ class Room extends React.Component {
         let context = feed.getContext('2d');
         let video = document.getElementById('my-camera');
 
-        // TODO: dimensions
-        feed.width = 1280 / 2;
-        feed.height = 720 / 2;
+        feed.width = 480;
+        feed.height = 360;
 
         video.style.display = 'none';
         this.canvasStream = feed.captureStream();
@@ -1054,8 +1052,8 @@ class Room extends React.Component {
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             flex: 1,
-                            paddingTop: '10px',
-                            paddingBottom: '10px',
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
                         }}>
                         <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
                             <ChatBox
