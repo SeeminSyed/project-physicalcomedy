@@ -270,8 +270,8 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center',
                 height: 'inherit',
             }}>
-                <video id='my-camera' width='480' height='360' autoPlay='autoplay' muted={true} ></video>
-                <canvas id='feed' ></canvas>
+                <video id='my-camera' width='480' height='360' autoPlay='autoplay'></video>
+                <canvas id='feed'></canvas>
                 <video id='peer-camera' width='480' height='360' autoPlay='autoplay' style={{ display: 'none', }} ></video>
             </Container>
         );
