@@ -684,6 +684,7 @@ class Room extends React.Component {
                                     this.mediaConnection.on('close', () => {
                                         alert('The host has ended the call!');
                                         if (this.dataConnection) this.dataConnection.close();
+                                        window.location.replace('../');
                                     });
 
                                 });
