@@ -43,12 +43,14 @@ export default class Credits extends React.Component {
                                         <li><a rel="noopener noreferrer" target="_blank" href="http://codepen.io/">Codepen.io </a></li>
                                         <li><a rel="noopener noreferrer" target="_blank" href="https://heroku.com">Heroku</a> and <a rel="noopener noreferrer" target="_blank" href="https://daveceddia.com/deploy-react-express-app-heroku/"> Dave Ceddia's</a> article on deployment of React and Express Applications</li>
                                         <li>Gesture Detection, our npm packages</li>
-                                        {/* <li></li> Peerjs Articles? */}
                                     </Col>
                                     <Col>
                                         <li> <a rel="noopener noreferrer" target="_blank" href="/"></a> https://github.com/ourcodeworld/videochat-peerjs-example/blob/master/public/source/js/script.js </li>
                                         <li> <a rel="noopener noreferrer" target="_blank" href="/"></a> https://www.andismith.com/blogs/2012/07/extending-getusermedia/ </li>
-                                        {/* <li></li> Peerjs Articles? */}
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="/"></a> https://stackoverflow.com/questions/56704138/i-want-to-create-a-copy-to-clipboard-using-react-js </li>
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="/"></a> https://www.cometchat.com/tutorials/build-an-anonymous-chat-app-with-react-react-bootstrap/ </li>
+                                        <li> <a rel="noopener noreferrer" target="_blank" href="/"></a> https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia basically developer.mozilla site </li>
+                                        
                                     </Col>
                                 </Row>
                             </ul>
