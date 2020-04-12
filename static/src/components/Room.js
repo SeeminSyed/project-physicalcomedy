@@ -299,9 +299,9 @@ class Streams extends React.Component {
                 overflow: 'hidden', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start', alignContent: 'center', /*alignItems: 'center',*/
                 height: 'inherit',
             }}>
-                <video id='my-camera' width='300' height='225' autoPlay='autoplay' muted={true} /*className='mx-auto d-block'*/></video>
+                <video id='my-camera' width='480' height='360' autoPlay='autoplay' muted={true} ></video>
                 <canvas id='feed' ></canvas>
-                <video id='peer-camera' width='300' height='225' autoPlay='autoplay' style={{ display: 'none', }} /*className='mx-auto d-block'*/></video>
+                <video id='peer-camera' width='480' height='360' autoPlay='autoplay' style={{ display: 'none', }} ></video>
                 {/* <div id='peers'>
                     {this.state.myPeers.map((peer) => (
                         <div key={peer.id}>
@@ -814,9 +814,8 @@ class Room extends React.Component {
         // feed.width = video.width;
         // feed.height = video.height;
 
-        // TODO: dimensions
-        feed.width = 1280 / 2;
-        feed.height = 720 / 2;
+        feed.width = 480;
+        feed.height = 360;
 
         video.style.display = 'none';
         this.canvasStream = feed.captureStream();
@@ -1189,8 +1188,8 @@ class Room extends React.Component {
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                             flex: 1,
-                            paddingTop: '10px',
-                            paddingBottom: '10px',
+                            paddingTop: '5px',
+                            paddingBottom: '5px',
                         }}>
                         <div id='left' style={{ display: 'flex', alignItems: 'stretch', flexDirection: 'column', flexBasis: '20%', maxWidth: '20%' }}>
                             <ChatBox
