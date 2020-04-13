@@ -58,3 +58,6 @@ Following are the top five technical challenges that we have anticipated:
 
 ### REST API Documentation
 - Documentation for the APIs used can be found in [APIDocumentation.md](APIDocumentation.md)
+
+
+#### Note that the application can be slow due to the heavy computations required by gesture detection and media stream manipulation
