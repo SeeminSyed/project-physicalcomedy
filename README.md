@@ -1,7 +1,7 @@
 # Physical Comedy
 
 ## Deployed:
-https://physicalcomedy.heroku.com 
+https://physicalcomedy.herokuapp.com 
 
 ## Video Demo:
 Application Demo can be found [here](https://youtu.be/JRofApgQaJE). Hope you enjoy!
